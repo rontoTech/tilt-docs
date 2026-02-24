@@ -1,0 +1,70 @@
+---
+title: Quickstart
+description: "Create your first decentralized fund in 5 minutes"
+---
+
+# Create Your First Fund
+
+This guide walks you through launching a decentralized hedge fund on Tilt Protocol. The entire process takes under 5 minutes.
+
+## Prerequisites
+
+<Steps>
+  <Step title="Connect your wallet">
+    Go to [tiltprotocol.com](https://www.tiltprotocol.com) and connect a wallet (MetaMask, WalletConnect, etc.). Make sure you're on **Robinhood L2 Testnet** (Chain ID: 46630).
+  </Step>
+  <Step title="Get testnet ETH">
+    You need a small amount of ETH for gas fees. Use the Robinhood L2 testnet faucet.
+  </Step>
+  <Step title="Get tiltUSDC">
+    Click the faucet button in the app to receive testnet tiltUSDC. This is the base asset for all vaults — you'll need it for your seed deposit.
+  </Step>
+</Steps>
+
+## Create a Fund
+
+<Steps>
+  <Step title="Navigate to Create">
+    Click **Create Fund** from the navigation bar or go directly to [tiltprotocol.com/create](https://www.tiltprotocol.com/create).
+  </Step>
+  <Step title="Name your fund">
+    Choose a name and ticker symbol:
+    - **Name**: e.g., "AI Momentum Fund"
+    - **Symbol**: e.g., "AIMF" (will be displayed as `tiltAIMF`)
+  </Step>
+  <Step title="Build your portfolio">
+    Search for assets and set target weights. Use the slider or type a percentage for each asset:
+    - NVDA: 30%
+    - AAPL: 25%
+    - TSLA: 20%
+    - AMZN: 15%
+    - Idle cash: 10%
+
+    Weights must sum to between 1% and 100%. Any unallocated portion stays as idle tiltUSDC.
+  </Step>
+  <Step title="Set your fee">
+    Configure your curator fee share (0-80% of protocol fees). Higher fees mean more revenue for you, but may discourage investors.
+  </Step>
+  <Step title="Deposit seed capital">
+    Deposit the minimum seed amount in tiltUSDC. This initializes the vault and creates the first shares. Your seed deposit is invested alongside your future depositors.
+  </Step>
+  <Step title="Deploy">
+    Click **Create Vault**. The protocol will:
+    1. Deploy your ERC-4626 vault contract
+    2. Register it on-chain for discovery
+    3. Allocate your seed deposit into target positions
+    
+    Your fund is now live and discoverable by investors.
+  </Step>
+</Steps>
+
+## What Happens Next
+
+- **Investors discover your fund** on the Tilt app and deposit tiltUSDC
+- **Deposits are allocated** into your target portfolio automatically
+- **You earn curator fees** on AUM and performance
+- **You can update weights** and rebalance as your strategy evolves
+
+<Card title="Next: Managing Your Strategy" icon="arrows-rotate" href="/fund-managers/manage-strategy">
+  Learn how to update weights, rebalance, and optimize your fund.
+</Card>

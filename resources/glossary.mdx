@@ -1,0 +1,32 @@
+---
+title: Glossary
+description: "Key terms and definitions used across Tilt Protocol"
+---
+
+# Glossary
+
+| Term | Definition |
+|---|---|
+| **AUM** | Assets Under Management. The total value of all assets held in a vault, expressed in tiltUSDC. |
+| **Base Asset** | The denomination currency for all vaults: tiltUSDC (a stablecoin pegged to USD). |
+| **Basis Points (BPS)** | A unit of measurement where 1 BPS = 0.01%. Weights and fees are stored in BPS (10,000 BPS = 100%). |
+| **BeaconProxy** | A proxy pattern where multiple vault instances share a single implementation contract via an UpgradeableBeacon. |
+| **Curator** | The fund manager who creates and manages a vault's strategy. Sets target weights and earns a share of fees. |
+| **Dead Shares** | 1,000 shares permanently minted to `address(1)` on vault creation. Prevents inflation attacks. |
+| **ERC-4626** | The Ethereum standard for tokenized vaults. Defines deposit, withdraw, and accounting interfaces. |
+| **ERC-20** | The Ethereum standard for fungible tokens. All tilt-tokens and vault shares are ERC-20. |
+| **High-Water Mark (HWM)** | The highest share price ever achieved by a vault. Performance fees are only charged on gains above this level. |
+| **Idle Cash** | tiltUSDC held in a vault that is not allocated to any target position. Occurs when target weights sum to less than 100%. |
+| **NAV** | Net Asset Value. The total value of a vault's holdings, calculated as base asset balance plus the sum of all held token values at oracle prices. |
+| **Oracle** | A system that provides off-chain data on-chain. Tilt uses oracles for price feeds and portfolio weights. |
+| **Rebalancing** | The process of selling over-weight tokens and buying under-weight tokens to align the portfolio with target weights. |
+| **RWA** | Real-World Assets. Stocks, bonds, commodities, and other traditional financial instruments tokenized on-chain. |
+| **Share Price** | NAV per share. Calculated as `totalAssets / totalSupply`. Expressed in 18-decimal precision. |
+| **Shares** | ERC-20 tokens representing proportional ownership of a vault's assets. Minted on deposit, burned on withdrawal. |
+| **Slippage** | The difference between expected and actual execution price of a trade. Protected by `minAmountOut` parameters. |
+| **Time-Lock** | A mandatory delay between proposing and executing weight changes in curator vaults. Protects investors. |
+| **tiltUSDC** | The base stablecoin on Robinhood L2, equivalent to USDC. Used for all deposits, withdrawals, and fee accounting. |
+| **tilt-Token** | An ERC-20 token representing a real-world asset on Robinhood L2 (e.g., tiltAAPL, tiltNVDA, tiltETH). |
+| **TokenRouter** | The swap execution and price oracle contract. Routes trades between tilt-tokens and tiltUSDC. |
+| **Vault** | A smart contract that holds a basket of assets, accepts deposits, processes withdrawals, and manages a portfolio strategy. |
+| **Weight** | A target allocation for a token in a vault's portfolio, expressed in basis points. |

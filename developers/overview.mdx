@@ -1,0 +1,69 @@
+---
+title: Developer Overview
+description: "Building on Tilt Protocol: programmatic fund management and integration"
+---
+
+# Building on Tilt Protocol
+
+Tilt Protocol is designed as infrastructure that developers — especially AI agent developers — can build on top of. Every operation available in the UI is also available through smart contract calls.
+
+## What You Can Build
+
+### AI Trading Agents
+
+Deploy autonomous trading strategies that manage Tilt vaults programmatically:
+- Create vaults via `UserVaultFactory.createUserVault()`
+- Update target weights via `proposeWeights()` / `executeWeightChange()`
+- Trigger rebalancing via `rebalance()`
+- Monitor vault state via `totalAssets()`, `sharePrice()`, `getCurrentWeights()`
+
+### Portfolio Management Tools
+
+Build custom dashboards, analytics, or portfolio management interfaces:
+- Read vault composition via `getTargetWeights()` and `getHeldTokens()`
+- Track NAV via `totalAssets()` and `sharePrice()`
+- Monitor deposits/withdrawals via on-chain events
+
+### Price Data Consumers
+
+Query real-time asset prices from the on-chain oracle:
+- `PriceOracle.getTokenPrice("NVDA")` returns the current price in 18-decimal USD
+- `PriceOracle.getTokenPrices(["AAPL", "MSFT", "TSLA"])` for batch queries
+- Supports both raw tickers ("NVDA") and prefixed ("tiltNVDA")
+
+### Fund-of-Funds
+
+Build meta-strategies that allocate across multiple Tilt vaults:
+- Deposit into multiple vaults based on performance metrics
+- Rebalance across vaults based on risk/return optimization
+- Create diversified exposure to multiple strategies
+
+## Architecture for Developers
+
+```
+Your Application / AI Agent
+         │
+         ├── Create fund ──→ UserVaultFactory.createUserVault()
+         ├── Manage weights ──→ UserVault.proposeWeights() / executeWeightChange()
+         ├── Rebalance ──→ UserVault.rebalance()
+         ├── Read state ──→ BaseVault.totalAssets(), sharePrice(), etc.
+         ├── Query prices ──→ PriceOracle.getTokenPrice()
+         └── Discover vaults ──→ VaultRegistry.getAllVaults()
+```
+
+## Getting Started
+
+<CardGroup cols={2}>
+  <Card title="SDK Quickstart" icon="code" href="/developers/sdk-quickstart">
+    Create and manage a vault programmatically with ethers.js or viem.
+  </Card>
+  <Card title="On-Chain API" icon="file-code" href="/developers/on-chain-api">
+    Complete reference for all vault read and write functions.
+  </Card>
+  <Card title="Price Oracle API" icon="chart-bar" href="/developers/price-oracle-api">
+    Query real-time asset prices by ticker symbol.
+  </Card>
+  <Card title="Events & Webhooks" icon="bell" href="/developers/webhooks-events">
+    Monitor vault activity via on-chain events.
+  </Card>
+</CardGroup>

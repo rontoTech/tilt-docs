@@ -1,0 +1,83 @@
+---
+title: Understanding Returns
+description: "Share price, NAV, performance tracking, and how fees affect your returns"
+---
+
+# Understanding Your Returns
+
+Your investment in a Tilt vault is represented by **shares**. The value of your shares changes as the fund's portfolio performs.
+
+## Share Price
+
+The share price is the Net Asset Value (NAV) per share:
+
+```
+share_price = total_assets / total_shares
+```
+
+Where `total_assets` = all held token values (at oracle prices) + idle tiltUSDC.
+
+- **Share price goes up** when the portfolio appreciates
+- **Share price goes down** when the portfolio declines
+- **Share price is diluted** slightly by management and performance fees
+
+## Calculating Your P&L
+
+Your profit or loss is:
+
+```
+current_value = your_shares × current_share_price
+profit_loss = current_value - total_deposited + total_withdrawn
+```
+
+The vault dashboard shows your current position value and returns.
+
+## How Fees Affect Returns
+
+### Entry Fee Impact
+
+The entry fee means you start slightly below break-even. A 0.30% entry fee on a 1,000 tiltUSDC deposit means you effectively invested 997 tiltUSDC.
+
+### Management Fee Impact
+
+Management fees accrue continuously via share dilution. A 0.50% annual management fee means your share of the vault shrinks by ~0.50% per year, all else equal.
+
+### Performance Fee Impact
+
+Performance fees are only charged on gains above the high-water mark. If the fund grows 20% and the performance fee is 15%, roughly 3% of total AUM is taken as fees (15% × 20%).
+
+### Exit Fee Impact
+
+When you withdraw, 0.50% (default) is deducted from your gross withdrawal amount.
+
+### Net Return Example
+
+```
+Deposit: 10,000 tiltUSDC
+Entry fee (0.30%): -30 → Net invested: 9,970
+
+Fund grows 20% over 1 year:
+  Gross portfolio value: ~11,964
+  Management fee (0.50%): ~-60 (via share dilution)
+  Performance fee (15% of gains): ~-299 (via share dilution)
+  Net portfolio value: ~11,605
+
+Withdraw all:
+  Exit fee (0.50%): ~-58
+  Net received: ~11,547
+
+Total return: ~15.5% (vs. 20% gross fund return)
+```
+
+## Comparing Strategies
+
+When comparing two vaults:
+
+- **Don't just look at gross returns** — account for fees
+- **Check the share price history** — a smooth uptrend is better than volatile spikes
+- **Look at the fee structure** — a fund returning 18% with 0.50% management is better than one returning 20% with 2.00% management
+- **Consider drawdowns** — how much did the fund lose in its worst period?
+
+<Tip>
+  The share price chart on the vault dashboard is the single best indicator of after-fee performance. It already accounts for all fee deductions.
+</Tip>

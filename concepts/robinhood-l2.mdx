@@ -1,0 +1,61 @@
+---
+title: Why Robinhood L2
+description: "RWA pioneers with sub-cent transactions, institutional liquidity, and EVM compatibility"
+---
+
+# Why Robinhood L2
+
+Tilt Protocol deploys on **Robinhood L2**, an Arbitrum Orbit chain purpose-built for real-world asset (RWA) trading. This isn't an arbitrary chain choice — Robinhood L2 uniquely enables what Tilt needs.
+
+## The RWA Advantage
+
+Robinhood is pioneering the tokenization of real-world assets. Their L2 chain provides:
+
+- **Tokenized stocks and ETFs** — 2,000+ real-world assets represented as ERC-20 tokens
+- **Institutional liquidity** — backed by Robinhood's market-making infrastructure
+- **Regulatory alignment** — built by a regulated broker-dealer with compliance in mind
+- **Bridged settlement** — on-chain trading with off-chain settlement against real markets
+
+For Tilt, this means fund managers can build portfolios of **real stocks** (not synthetic derivatives) with **real liquidity** — something no other L2 offers today.
+
+## Performance Characteristics
+
+| Metric | Value |
+|---|---|
+| **Transaction cost** | < $0.01 (sub-cent) |
+| **Block time** | ~250ms |
+| **Finality** | ~250ms (soft), inherits Arbitrum/Ethereum security |
+| **EVM version** | Full equivalence (Solidity, Foundry, Hardhat all work) |
+| **Chain ID** | 46630 |
+
+## Why This Matters for Tilt
+
+### Micro-Strategies Are Viable
+
+On Ethereum mainnet, a single swap costs $5-50 in gas. A vault rebalance touching 10 assets would cost $50-500. On Robinhood L2, the same rebalance costs < $0.10 total. This makes:
+
+- Small fund sizes practical (even $100 funds work)
+- Frequent rebalancing affordable
+- Complex multi-asset strategies economical
+
+### Batch Rebalancing
+
+Tilt vaults can execute 10-30 simultaneous swaps in a single rebalance transaction. On L1, this would be prohibitively expensive. On Robinhood L2, it's routine.
+
+### Real-Time Strategy Execution
+
+With ~250ms finality, AI trading agents can react to market signals in near-real-time. No waiting for block confirmations. No MEV frontrunning concerns.
+
+## Network Details
+
+<Note>
+  Currently deployed on **Robinhood L2 Testnet**. Mainnet deployment planned.
+</Note>
+
+| | |
+|---|---|
+| **Network name** | Robinhood L2 Testnet |
+| **Chain ID** | 46630 |
+| **Currency** | ETH |
+| **RPC URL** | Available via Robinhood developer portal |
+| **Block explorer** | Available via Robinhood developer portal |

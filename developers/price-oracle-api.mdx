@@ -1,0 +1,106 @@
+---
+title: Price Oracle API
+description: "Query real-time asset prices by ticker symbol"
+---
+
+# Price Oracle API
+
+The `PriceOracle` contract provides a simple interface for querying on-chain asset prices by ticker symbol.
+
+## Contract Interface
+
+```solidity
+interface IPriceOracle {
+    function getTokenPrice(string calldata ticker) external view returns (uint256 priceUsd18);
+    function getTokenPrices(string[] calldata tickers) external view returns (uint256[] memory);
+    function resolveToken(string calldata ticker) external view returns (address);
+}
+```
+
+## Functions
+
+### `getTokenPrice(string ticker)`
+
+Returns the current USD price of a single asset in 18-decimal precision.
+
+**Parameters:**
+- `ticker` — Asset symbol (e.g., `"NVDA"`, `"AAPL"`, `"ETH"`)
+
+**Returns:**
+- `uint256` — Price in USD with 18 decimals (e.g., `192000000000000000000` = $192.00)
+
+**Reverts:**
+- `TokenNotFound(ticker)` if the ticker doesn't resolve to a known token
+- `PriceNotSet(ticker)` if the token exists but has no price data
+
+**Example:**
+```javascript
+const price = await oracle.getTokenPrice("NVDA");
+// 192000000000000000000 → $192.00
+```
+
+### `getTokenPrices(string[] tickers)`
+
+Batch query for multiple asset prices. More gas-efficient than individual calls.
+
+**Parameters:**
+- `tickers` — Array of ticker symbols
+
+**Returns:**
+- `uint256[]` — Array of prices in the same order as input
+
+**Example:**
+```javascript
+const prices = await oracle.getTokenPrices(["AAPL", "MSFT", "TSLA"]);
+// [232..., 420..., 250...]
+```
+
+### `resolveToken(string ticker)`
+
+Resolves a ticker symbol to its on-chain token address. Useful for building transactions that reference tokens directly.
+
+**Parameters:**
+- `ticker` — Asset symbol
+
+**Returns:**
+- `address` — The ERC-20 token address on Robinhood L2
+
+## Ticker Resolution
+
+The oracle accepts both raw and prefixed tickers:
+
+| Input | Resolved To |
+|---|---|
+| `"NVDA"` | tiltNVDA token address |
+| `"tiltNVDA"` | tiltNVDA token address |
+| `"AAPL"` | tiltAAPL token address |
+| `"tiltAAPL"` | tiltAAPL token address |
+
+Internally, the oracle first checks `StockTokenFactory.tokenBySymbol(ticker)`. If not found, it tries `tokenBySymbol("tilt" + ticker)`.
+
+## Price Freshness
+
+Prices are updated by the backend oracle service at regular intervals (approximately every few minutes). The `TokenRouter` stores the latest price for each token. Prices reflect aggregated data from multiple sources (Yahoo Finance, Financial Modeling Prep, Alpha Vantage).
+
+<Warning>
+  On testnet, prices are updated by a centralized reporter. On mainnet, prices will be sourced from decentralized oracle networks with additional freshness guarantees.
+</Warning>
+
+## Usage in Smart Contracts
+
+```solidity
+import {IPriceOracle} from "./interfaces/IPriceOracle.sol";
+
+contract MyStrategy {
+    IPriceOracle public oracle;
+
+    function checkPrice() external view returns (uint256) {
+        return oracle.getTokenPrice("NVDA");
+    }
+
+    function isUndervalued(string calldata ticker, uint256 threshold) external view returns (bool) {
+        uint256 price = oracle.getTokenPrice(ticker);
+        return price < threshold;
+    }
+}
+```

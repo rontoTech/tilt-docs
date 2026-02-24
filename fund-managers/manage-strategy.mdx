@@ -1,0 +1,73 @@
+---
+title: Manage Your Strategy
+description: "Update weights, rebalance holdings, and manage your fund over time"
+---
+
+# Managing Your Strategy
+
+Once your fund is live, you can actively manage it by updating target weights and triggering rebalances.
+
+## Updating Target Weights
+
+To change your fund's asset allocation:
+
+1. Navigate to your vault's management page
+2. Propose new target weights
+3. Wait for the time-lock delay to pass
+4. New weights become effective
+
+### Time-Lock Protection
+
+Weight changes are subject to a **time-lock delay** to protect investors. This prevents a curator from suddenly shifting the entire portfolio without warning.
+
+When you propose new weights:
+- The proposal is recorded on-chain with a timestamp
+- Investors can see the pending changes and decide whether to stay
+- After the delay period, the new weights become active
+- You can then trigger a rebalance to align holdings
+
+<Warning>
+  You cannot bypass the time-lock. This is enforced by the smart contract to protect depositors.
+</Warning>
+
+## Rebalancing
+
+Rebalancing realigns your vault's holdings to match target weights. Over time, asset price movements cause the actual allocation to drift from targets.
+
+### When to Rebalance
+
+- After a weight change proposal takes effect
+- When portfolio drift exceeds your tolerance
+- After significant market movements
+- On a regular schedule (e.g., weekly, monthly)
+
+### How Rebalancing Works
+
+1. The `RebalanceEngine` calculates the set of trades needed
+2. Over-weight assets are sold
+3. Under-weight assets are bought
+4. All trades execute through `TokenRouter` at oracle prices
+5. Slippage protection ensures fair execution
+
+### Rebalance Interval
+
+A minimum interval between rebalances prevents excessive trading. This protects the vault from unnecessary transaction costs and potential manipulation.
+
+## Allocation of New Deposits
+
+When investors deposit into your fund, their capital is held as unallocated tiltUSDC until `allocateIdleAssets()` is called. This function:
+
+- Deploys idle cash into target positions
+- Is **permissionless** — anyone can trigger it (not just the curator)
+- Only buys; doesn't sell existing positions
+- Respects current target weights
+
+## Monitoring Your Fund
+
+Track your fund's performance through the vault dashboard:
+
+- **Share price** — current NAV per share
+- **Total assets** — sum of all held positions plus idle cash
+- **Current weights** — actual allocation vs. target weights
+- **Depositors** — number of unique investors
+- **Fee accrual** — your accumulated curator fees

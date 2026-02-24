@@ -1,0 +1,87 @@
+---
+title: Create a Fund
+description: "Full guide to naming, configuring assets, setting weights, and deploying your vault"
+---
+
+# Create a Fund — Full Guide
+
+This page covers every detail of fund creation on Tilt Protocol.
+
+## Fund Identity
+
+### Name
+
+Your fund's display name. Choose something descriptive that communicates your strategy:
+- "Tech Growth Fund"
+- "AI Momentum Strategy"
+- "Blue Chip Dividend Mix"
+
+### Symbol
+
+A short ticker symbol (2-10 characters) that becomes your vault's ERC-20 share token. The protocol prefixes it with `tilt`:
+- Symbol: `TECH` → Token: `tiltTECH`
+- Symbol: `AIMF` → Token: `tiltAIMF`
+
+## Portfolio Construction
+
+### Selecting Assets
+
+Choose from 100+ available tokenized assets. You can search by ticker or company name. Assets span:
+
+- **Mega-cap tech**: AAPL, MSFT, NVDA, GOOGL, META, AMZN
+- **Financials**: JPM, V, MA, GS, BLK
+- **Healthcare**: LLY, UNH, JNJ, MRK, PFE
+- **Consumer**: TSLA, HD, WMT, COST, SBUX
+- **Crypto-adjacent**: ETH, COIN, MSTR, HOOD
+- And many more across all sectors
+
+Only tokens approved by the vault factory can be included. This prevents funds from holding unpriced or illiquid assets.
+
+### Setting Weights
+
+Weights are specified in percentages (internally stored as basis points, where 100% = 10,000 BPS).
+
+**Rules:**
+- Each asset weight must be > 0% (you can't add a 0% allocation)
+- Total weights must sum to between 1% and 100%
+- The unallocated portion (100% minus total weight) remains as idle tiltUSDC
+
+**Example allocations:**
+
+| Strategy | Allocation | Idle Cash |
+|---|---|---|
+| Concentrated tech | NVDA 40%, AAPL 30%, MSFT 30% | 0% |
+| Balanced with cash | NVDA 25%, AAPL 20%, JPM 15%, JNJ 10% | 30% |
+| Single-asset | ETH 100% | 0% |
+| Cash-heavy | TSLA 10%, AMZN 10% | 80% |
+
+### Token Limit
+
+Vaults can hold up to **30 different tokens** at once. This cap prevents excessive gas costs during rebalancing and withdrawal operations.
+
+## Seed Deposit
+
+Every fund requires a minimum seed deposit to initialize. This:
+
+- Creates the initial vault shares
+- Burns the first 1,000 shares to `address(1)` (inflation attack protection)
+- Gives the vault its starting NAV
+- Demonstrates the curator's skin-in-the-game
+
+The seed deposit is invested alongside future depositors — you're aligned with your investors.
+
+## Vault Creation Fee
+
+A small creation fee (in ETH) is charged to deploy the vault. This covers:
+- BeaconProxy deployment gas
+- VaultRegistry registration
+- RebalanceEngine authorization
+- FeeManager configuration
+
+## After Deployment
+
+Once deployed, your fund is immediately:
+
+1. **Discoverable** — listed on the Tilt app for investors to find
+2. **Depositable** — anyone can deposit tiltUSDC and receive shares
+3. **Manageable** — you can update weights and trigger rebalancing

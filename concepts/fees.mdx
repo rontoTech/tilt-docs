@@ -1,0 +1,96 @@
+---
+title: Fee Structure
+description: "Entry, exit, management, and performance fees — enforced by smart contracts"
+---
+
+# Fee Structure
+
+All fees on Tilt Protocol are enforced by smart contracts. No hidden charges, no off-chain deductions — everything is transparent and auditable on-chain.
+
+## Fee Types
+
+### Entry Fee
+
+Charged when an investor deposits into a vault.
+
+| | |
+|---|---|
+| **Default** | 0.30% |
+| **Maximum** | 1.00% |
+| **Collected in** | tiltUSDC (deducted from deposit) |
+
+### Exit Fee
+
+Charged when an investor withdraws from a vault.
+
+| | |
+|---|---|
+| **Default** | 0.50% |
+| **Maximum** | 2.00% |
+| **Collected in** | tiltUSDC (deducted from withdrawal) |
+
+### Management Fee
+
+Charged continuously on assets under management (AUM), annualized.
+
+| | |
+|---|---|
+| **Default** | 0.50% per year |
+| **Maximum** | 2.00% per year |
+| **Collection method** | Share dilution (new shares minted to fee recipients) |
+
+### Performance Fee
+
+Charged on gains above the high-water mark (HWM). This prevents double-charging after drawdowns — fees are only collected on new all-time highs.
+
+| | |
+|---|---|
+| **Default** | 15.00% of gains above HWM |
+| **Maximum** | 30.00% |
+| **Collection method** | Share dilution |
+
+## Fee Flow Example
+
+```
+Investor deposits 10,000 tiltUSDC
+  └─ Entry fee: 0.30% → 30 tiltUSDC to FeeManager
+  └─ Net deposit: 9,970 tiltUSDC → vault mints shares
+
+Portfolio grows 20% over 1 year (AUM: ~12,000 tiltUSDC)
+  └─ Management fee: 0.50% of AUM accrued continuously via share dilution
+  └─ Performance fee: 15% of gains above HWM via share dilution
+
+Investor withdraws full position
+  └─ Exit fee: 0.50% deducted from gross withdrawal
+  └─ Vault auto-liquidates tokens → returns tiltUSDC
+```
+
+## Revenue Split
+
+Fee revenue is split between the protocol treasury and the vault's curator:
+
+| | Protocol | Curator |
+|---|---|---|
+| **Minimum** | 20% | 0% |
+| **Maximum** | 100% | 80% |
+
+The curator's share is configured at vault creation and enforced by `FeeManager`. The protocol always retains at least 20%.
+
+### Oracle Vaults (Flagship)
+
+For protocol-owned vaults (e.g., politician trackers), 100% of fees go to the protocol treasury.
+
+### Curator Vaults (User-Created)
+
+The curator sets their fee share at creation time. For example, a curator requesting 60% share means:
+- 60% of all fees → curator wallet
+- 40% of all fees → protocol treasury
+
+## Why This Model
+
+Traditional hedge funds charge "2-and-20" (2% management, 20% performance) with no transparency. Tilt's fee model is:
+
+- **Lower** — defaults are well below industry standard
+- **Capped** — maximums enforced by contract code
+- **Transparent** — all fee calculations are on-chain and auditable
+- **Fair** — high-water mark prevents performance fee abuse

@@ -1,0 +1,59 @@
+---
+title: UserVault
+description: "Permissionless curator-managed vaults with time-lock governance"
+---
+
+# UserVault
+
+`UserVault` extends `BaseVault` to support permissionless, curator-managed funds. Anyone can create a UserVault through the `UserVaultFactory`.
+
+## Key Features
+
+### Curator Governance
+
+The vault creator (curator) manages target weights with a time-lock mechanism:
+
+1. Curator calls `proposeWeights()` with new token/weight arrays
+2. The proposal is recorded on-chain with a timestamp
+3. After the time-lock delay, `executeWeightChange()` makes the new weights active
+4. Curator can then trigger `rebalance()` to align holdings
+
+The time-lock protects investors by preventing surprise portfolio changes. Investors can see pending weight changes and withdraw before they take effect.
+
+### Approved Tokens Only
+
+UserVaults can only hold tokens from the factory's approved token list. This prevents curators from adding unpriced, illiquid, or malicious tokens to their portfolio.
+
+### Curator Fees
+
+The curator earns a configurable share of all fees (up to 80%). The fee share is set at vault creation and cannot be changed.
+
+### Idle Cash Support
+
+Target weights can sum to less than 100% (10,000 BPS). The unallocated portion remains as idle tiltUSDC in the vault. Weights must sum to between 1 and 10,000 BPS.
+
+## UserVaultFactory
+
+The factory deploys UserVault instances as BeaconProxy clones. It handles:
+
+- **Validation**: ensures valid weights, approved tokens, and minimum seed deposit
+- **Deployment**: creates the BeaconProxy and initializes the vault
+- **Registration**: adds the vault to `VaultRegistry`
+- **Authorization**: registers the vault on `RebalanceEngine`
+- **Fee setup**: configures the curator fee split in `FeeManager`
+
+### Creation Requirements
+
+| Parameter | Description |
+|---|---|
+| Name | Fund display name |
+| Symbol | Share token symbol (auto-prefixed with "tilt") |
+| Tokens | Array of approved token addresses |
+| Weights | Array of weights in BPS (must sum to 1-10000) |
+| Curator Fee | BPS share of fees for curator (max enforced by factory) |
+| Seed Deposit | Minimum tiltUSDC deposit to initialize |
+| Creation Fee | ETH fee paid to the protocol |
+
+### Beacon Upgrades
+
+All UserVaults share a single implementation via `UpgradeableBeacon`. The protocol owner can upgrade the implementation, and all existing vaults inherit the new logic while preserving their state.

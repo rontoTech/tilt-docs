@@ -1,0 +1,50 @@
+---
+title: TokenRouter
+description: "DEX abstraction layer for swap execution and price oracles"
+---
+
+# TokenRouter
+
+The `TokenRouter` is the swap execution and price oracle layer. On testnet, it operates as a mock DEX that executes trades at oracle-set prices. On mainnet, it will be replaced by an RFQ system with institutional liquidity providers.
+
+## Functions
+
+### Price Oracle
+
+| Function | Description |
+|---|---|
+| `getTokenPrice(address token)` | Returns USD price in 18-decimal precision |
+| `tokenPrices(address token)` | Direct storage mapping for token prices |
+
+Prices are updated by the backend price service via `setTokenPricesBatch()`.
+
+### Swap Execution
+
+| Function | Description |
+|---|---|
+| `swap(address tokenIn, address tokenOut, uint256 amountIn, uint256 minAmountOut)` | Execute a trade at oracle prices |
+| `getQuote(address tokenIn, address tokenOut, uint256 amountIn)` | Preview the output amount |
+
+### Pair Management
+
+| Function | Description |
+|---|---|
+| `setPairSupported(address tokenA, address tokenB, bool supported)` | Enable/disable a trading pair |
+
+Only supported pairs can be swapped. All asset tokens are paired with tiltUSDC.
+
+## Testnet Behavior
+
+On testnet, the `TokenRouter` (actually `MockTokenRouter`):
+- Mints output tokens to the caller (simulates swap execution)
+- Burns input tokens from the caller
+- Trades at exact oracle prices (no slippage simulation)
+- Prices set by an authorized reporter wallet
+
+## Mainnet Plan
+
+On mainnet, the `TokenRouter` will be replaced by:
+- **RFQ (Request for Quote)** system with Robinhood L2 market makers
+- Institutional-grade liquidity for all supported assets
+- Real market impact and slippage
+- Settlement against actual tokenized RWA markets

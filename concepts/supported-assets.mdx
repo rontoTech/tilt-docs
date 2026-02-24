@@ -1,0 +1,77 @@
+---
+title: Supported Assets
+description: "2,000+ stocks, ETFs, and crypto available for portfolio construction"
+---
+
+# Supported Assets
+
+Tilt Protocol supports 100+ tokenized assets on Robinhood L2 Testnet, with 2,000+ assets planned for mainnet. Each asset is represented as a `tilt`-prefixed ERC-20 token (e.g., `tiltAAPL`, `tiltNVDA`, `tiltETH`).
+
+## How Token Pricing Works
+
+Each tilt-token's price is maintained by the `TokenRouter` oracle:
+
+- Prices are sourced from multiple feeds (Yahoo Finance, Financial Modeling Prep, Alpha Vantage)
+- Updated regularly by the backend price service
+- Stored on-chain as 18-decimal USD values
+- Queryable via the [PriceOracle contract](/contracts/price-oracle)
+
+## Currently Available Assets
+
+### Highlighted Tickers
+
+These are some of the most popular assets available for fund construction:
+
+| Ticker | Name | Sector |
+|---|---|---|
+| AAPL | Apple Inc. | Technology |
+| MSFT | Microsoft Corp. | Technology |
+| NVDA | NVIDIA Corp. | Semiconductors |
+| AMZN | Amazon.com Inc. | Consumer |
+| TSLA | Tesla Inc. | Automotive |
+| GOOGL | Alphabet Inc. | Technology |
+| META | Meta Platforms | Technology |
+| NFLX | Netflix Inc. | Entertainment |
+| PLTR | Palantir Technologies | Software |
+| AMD | Advanced Micro Devices | Semiconductors |
+| JPM | JPMorgan Chase | Financials |
+| V | Visa Inc. | Financials |
+| ETH | Ethereum | Crypto |
+| COIN | Coinbase Global | Crypto |
+| MSTR | MicroStrategy | Crypto-Adjacent |
+
+### Full Asset List
+
+Over 100 tokenized assets are available across all major sectors:
+
+**Technology:** AAPL, MSFT, NVDA, GOOGL, META, AMZN, CRM, AVGO, ORCL, ADBE, INTU, NOW, PANW, CRWD, CSCO, IBM, INTC, ANET, AMAT, KLAC, LRCX, SNPS, CDNS, NET, DDOG, SNOW
+
+**Semiconductors:** NVDA, AMD, AVGO, INTC, QCOM, MU, MRVL, TXN, ADI, KLAC, LRCX, AMAT
+
+**Financials:** JPM, V, MA, BAC, GS, MS, BLK, SCHW, AXP, SPGI, CME, MCO, C, WFC, COIN, HOOD
+
+**Healthcare:** LLY, UNH, JNJ, ABBV, MRK, PFE, TMO, ABT, ISRG, AMGN, GILD, BMY, SYK, DHR, REGN, CI
+
+**Consumer:** AMZN, TSLA, HD, WMT, COST, MCD, SBUX, NIO, PEP, KO, PG, CL, MDLZ, LOW
+
+**Industrials:** CAT, HON, GE, BA, LMT, RTX, UNP, DE, ADP, UPS, FDX, WM
+
+**Energy:** XOM, CVX, OXY, SHEL
+
+**Real Estate & Utilities:** NEE, PLD, SO, AMT, CCI, WELL
+
+**Crypto-Adjacent:** ETH, COIN, MSTR, HOOD, SQ
+
+**Fintech:** PYPL, SQ, SHOP, FISV, FIS, INTU
+
+<Note>
+  On testnet, assets trade at oracle-set prices through the mock `TokenRouter`. On mainnet, trades will execute through an RFQ system with institutional liquidity providers on Robinhood L2.
+</Note>
+
+## Adding New Assets
+
+New tokenized assets are deployed via the `MockStockTokenFactory` contract. Each new token is automatically:
+
+1. Registered with the `TokenRouter` for price feeds
+2. Paired with tiltUSDC for trading
+3. Approved on vault factories for portfolio inclusion

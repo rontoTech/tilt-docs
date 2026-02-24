@@ -1,0 +1,76 @@
+---
+title: Best Practices
+description: "Portfolio construction, risk management, and fund management tips"
+---
+
+# Best Practices for Fund Managers
+
+Launching a fund is easy. Running it well takes discipline. Here are guidelines for building and managing a successful strategy on Tilt Protocol.
+
+## Portfolio Construction
+
+### Diversification
+
+- **Spread across sectors** — Don't put everything in tech. Mix sectors (technology, financials, healthcare, consumer) for natural hedging.
+- **Limit concentration** — No single asset should dominate. A 40%+ position in one stock means your fund's fate is tied to that one name.
+- **Use idle cash** — A 10-30% cash buffer reduces volatility and provides a cushion for withdrawals.
+
+### Position Sizing
+
+| Risk Level | Max Single Position | Suggested Assets | Idle Cash |
+|---|---|---|---|
+| Conservative | 15% | 10-20 | 20-30% |
+| Moderate | 25% | 6-12 | 10-20% |
+| Aggressive | 40% | 3-6 | 0-10% |
+
+### Token Limit
+
+Vaults support up to 30 tokens. In practice, 8-15 is optimal:
+- Fewer than 5: too concentrated, high single-stock risk
+- More than 20: diminishing diversification benefit, higher rebalance costs
+
+## Rebalancing
+
+### Frequency
+
+- **Too often**: unnecessary trading costs and slippage
+- **Too rarely**: portfolio drift reduces strategy effectiveness
+- **Sweet spot**: weekly to monthly, or when any position drifts > 5% from target
+
+### After Weight Changes
+
+Always rebalance after updating target weights. Otherwise, your fund holds the old allocation while displaying new targets — confusing for investors.
+
+## Fee Strategy
+
+- **New fund managers**: start with lower curator fees (40-60%) to attract initial deposits. Build a track record first.
+- **Established managers**: higher fees (60-80%) are acceptable if you demonstrate consistent alpha.
+- **Consider your market**: a simple index fund shouldn't charge the same as an active alpha strategy.
+
+## Investor Communication
+
+Even though Tilt is decentralized, good fund managers communicate:
+
+- **Name your fund clearly** — the name should communicate the strategy (e.g., "Tech Momentum" not "Fund 42")
+- **Keep weights aligned with your thesis** — if you name it "Blue Chip," don't fill it with meme stocks
+- **Be consistent** — frequent radical weight changes erode investor confidence
+
+## Risk Management
+
+### The Time-Lock Is Your Friend
+
+The weight change time-lock exists to protect investors. It also protects you:
+- Forces you to plan changes in advance rather than react emotionally
+- Gives you time to reconsider before a change takes effect
+- Builds investor trust through predictability
+
+### Monitor Share Price
+
+Track your fund's share price relative to the high-water mark. Performance fees only accrue above HWM, so drawdowns directly impact your fee revenue.
+
+### Idle Cash as a Tool
+
+Don't think of idle cash as "wasted." It's a strategic instrument:
+- Reduce to 0% when conviction is high
+- Increase to 30%+ ahead of uncertainty
+- Use it for dollar-cost averaging into new positions

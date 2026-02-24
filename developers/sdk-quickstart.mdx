@@ -1,0 +1,144 @@
+---
+title: SDK Quickstart
+description: "Create and manage a vault programmatically using ethers.js or viem"
+---
+
+# SDK Quickstart
+
+This guide shows how to interact with Tilt Protocol programmatically. All examples use **ethers.js v6**, but any EVM library (viem, web3.js) works identically.
+
+## Setup
+
+```javascript
+import { ethers } from "ethers";
+
+const RPC_URL = "https://rpc.robinhoodl2.com"; // Robinhood L2 Testnet
+const provider = new ethers.JsonRpcProvider(RPC_URL);
+const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
+
+const ADDRESSES = {
+  USDC: "0x941A382852E989078e15b381f921C488a7Ca5299",
+  USER_VAULT_FACTORY: "0x67f0CdD4bb561BaAa3A5f1d4FE7Ede1F68E00712",
+  VAULT_REGISTRY: "0xf61b0b073105c8dDAb1adeE13b17E86122D9a60d",
+  PRICE_ORACLE: "0xYOUR_PRICE_ORACLE_ADDRESS",
+};
+```
+
+## Create a Vault
+
+```javascript
+const factoryAbi = [
+  "function createUserVault(string name, string symbol, address[] tokens, uint16[] weights, uint16 curatorFeeBps, uint256 seedDeposit, string metadataURI) payable returns (address)",
+  "function vaultCreationFee() view returns (uint256)",
+  "function minSeedDeposit() view returns (uint256)",
+];
+
+const factory = new ethers.Contract(
+  ADDRESSES.USER_VAULT_FACTORY, factoryAbi, wallet
+);
+
+// 1. Approve tiltUSDC spend for seed deposit
+const usdc = new ethers.Contract(ADDRESSES.USDC, [
+  "function approve(address spender, uint256 amount) returns (bool)"
+], wallet);
+await usdc.approve(ADDRESSES.USER_VAULT_FACTORY, ethers.parseUnits("1000", 6));
+
+// 2. Create the vault
+const creationFee = await factory.vaultCreationFee();
+const tx = await factory.createUserVault(
+  "AI Alpha Fund",           // name
+  "AIALPHA",                 // symbol (becomes tiltAIALPHA)
+  [                          // token addresses
+    "0xB9ab028505f3746c4E1208FD31f8db7733e2bb3A", // tiltNVDA
+    "0x62E15C761dEB77A2ad8feD3cdff4c0B80eF3cd7a", // tiltAAPL
+    "0xDc3E7C2b1b63970e544911359E39155B90244c69", // tiltTSLA
+  ],
+  [4000, 3500, 2500],        // weights in BPS (40%, 35%, 25%)
+  6000,                      // curator fee: 60%
+  ethers.parseUnits("100", 6), // seed deposit: 100 tiltUSDC
+  "",                        // metadata URI (optional)
+  { value: creationFee }
+);
+
+const receipt = await tx.wait();
+console.log("Vault deployed at:", receipt.logs[0].address);
+```
+
+## Read Vault State
+
+```javascript
+const vaultAbi = [
+  "function totalAssets() view returns (uint256)",
+  "function sharePrice() view returns (uint256)",
+  "function totalSupply() view returns (uint256)",
+  "function getTargetWeights() view returns (tuple(address token, uint16 weightBps)[])",
+  "function getCurrentWeights() view returns (tuple(address token, uint16 weightBps)[])",
+  "function getHeldTokens() view returns (address[])",
+  "function balanceOf(address) view returns (uint256)",
+];
+
+const vault = new ethers.Contract(VAULT_ADDRESS, vaultAbi, provider);
+
+const totalAssets = await vault.totalAssets();
+const sharePrice = await vault.sharePrice();
+const weights = await vault.getTargetWeights();
+
+console.log("Total assets:", ethers.formatUnits(totalAssets, 6), "tiltUSDC");
+console.log("Share price:", ethers.formatUnits(sharePrice, 18));
+console.log("Target weights:", weights.map(w => ({
+  token: w.token,
+  weight: Number(w.weightBps) / 100 + "%"
+})));
+```
+
+## Deposit into a Vault
+
+```javascript
+const vaultWrite = new ethers.Contract(VAULT_ADDRESS, [
+  "function deposit(uint256 assets, address receiver) returns (uint256 shares)",
+], wallet);
+
+// Approve vault to spend tiltUSDC
+await usdc.approve(VAULT_ADDRESS, ethers.parseUnits("500", 6));
+
+// Deposit 500 tiltUSDC
+const tx = await vaultWrite.deposit(
+  ethers.parseUnits("500", 6),
+  wallet.address
+);
+const receipt = await tx.wait();
+console.log("Shares received:", receipt);
+```
+
+## Query Asset Prices
+
+```javascript
+const oracleAbi = [
+  "function getTokenPrice(string ticker) view returns (uint256)",
+  "function getTokenPrices(string[] tickers) view returns (uint256[])",
+];
+
+const oracle = new ethers.Contract(ADDRESSES.PRICE_ORACLE, oracleAbi, provider);
+
+const nvdaPrice = await oracle.getTokenPrice("NVDA");
+console.log("NVDA:", ethers.formatUnits(nvdaPrice, 18), "USD");
+
+const prices = await oracle.getTokenPrices(["AAPL", "MSFT", "TSLA"]);
+prices.forEach((p, i) => {
+  console.log(["AAPL", "MSFT", "TSLA"][i] + ":", ethers.formatUnits(p, 18), "USD");
+});
+```
+
+## Discover All Vaults
+
+```javascript
+const registryAbi = [
+  "function getAllVaults() view returns (tuple(address vault, uint8 vaultType, address curator, string metadataURI, uint256 createdAt, bool active)[])",
+];
+
+const registry = new ethers.Contract(ADDRESSES.VAULT_REGISTRY, registryAbi, provider);
+const vaults = await registry.getAllVaults();
+
+const activeVaults = vaults.filter(v => v.active);
+console.log(`Found ${activeVaults.length} active vaults`);
+```

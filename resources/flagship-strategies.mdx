@@ -1,0 +1,46 @@
+---
+title: Flagship Strategies
+description: "Politician-tracking vaults that showcase the protocol's capabilities"
+---
+
+# Flagship Strategies
+
+Tilt Protocol's flagship strategies are six politician-tracking vaults that automatically mirror the stock portfolios of U.S. Congress members. These vaults demonstrate the full power of the platform — automated data ingestion, on-chain oracle updates, real-time rebalancing, and transparent investor access.
+
+## Why Politicians?
+
+Under the STOCK Act, members of Congress are required to disclose their stock trades within 45 days. Research has shown that these disclosures often signal informed trading — politicians' portfolios have historically outperformed the S&P 500.
+
+Tilt's flagship vaults turn this public data into investable, on-chain strategies. They serve as proof that the protocol can power real, automated, alpha-generating funds.
+
+## How They Work
+
+1. **Data Ingestion**: A backend service polls the House Stock Watcher API for new trade disclosures
+2. **Processing**: Trades are normalized and converted into portfolio weights (basis points)
+3. **Oracle Update**: Weights are published to the `PortfolioOracle` contract on-chain
+4. **Rebalancing**: Vaults detect weight changes and automatically rebalance to match
+5. **Investor Access**: Anyone can deposit tiltUSDC into these vaults and gain exposure
+
+The entire pipeline is automated — no human intervention required after initial setup.
+
+## Live Vaults
+
+| Vault | Symbol | Key Holdings |
+|---|---|---|
+| **Tilt Pelosi Index** | tiltPELOSI | NVDA, TSLA, CRM, AVGO, MSFT, AAPL, AMZN |
+| **Tilt Tuberville Index** | tiltTUBE | JPM, NVDA, MSFT, V, AAPL, META |
+| **Tilt Crenshaw Index** | tiltCREN | MSFT, AAPL, JNJ, GOOGL, AMZN, TSLA |
+| **Tilt McCaul Index** | tiltMCCAUL | JPM, SAFRY, DOW, EPAM, SHEL, FIS |
+| **Tilt Wyden Index** | tiltWYDEN | NVDA, AAPL, AMZN, MSFT, UPS, DIS |
+| **Tilt Sessions Index** | tiltSESS | AMZN, HNDL, MSFT, NVDA, CCI, LOW |
+
+## Not Just Politicians
+
+These vaults are a showcase, not the product. The same infrastructure powers any strategy:
+
+- **AI trading agents** can manage vaults programmatically
+- **Human curators** can build custom thematic portfolios
+- **Data-driven strategies** can feed any signal source into an oracle vault
+- **Index funds** can track any basket of assets
+
+The politician vaults prove the system works. The real opportunity is what you build on top of it.

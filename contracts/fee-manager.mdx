@@ -1,0 +1,45 @@
+---
+title: FeeManager
+description: "Centralized fee configuration and protocol/curator revenue splits"
+---
+
+# FeeManager
+
+The `FeeManager` contract handles fee configuration and revenue distribution between the protocol treasury and vault curators.
+
+## Fee Parameters
+
+| Fee | Default | Maximum | Collection Method |
+|---|---|---|---|
+| Entry | 0.30% (30 BPS) | 1.00% (100 BPS) | Deducted from deposit |
+| Exit | 0.50% (50 BPS) | 2.00% (200 BPS) | Deducted from withdrawal |
+| Management | 0.50% (50 BPS) annualized | 2.00% (200 BPS) | Share dilution |
+| Performance | 15.00% (1500 BPS) above HWM | 30.00% (3000 BPS) | Share dilution |
+
+## Revenue Split
+
+All collected fees are split between two recipients:
+
+1. **Protocol Treasury** — minimum 20% of all fees
+2. **Curator Wallet** — up to 80% of all fees (set at vault creation)
+
+For oracle-driven vaults (politician trackers), 100% goes to the protocol treasury.
+
+## Share Dilution
+
+Management and performance fees are collected by minting new vault shares to fee recipients. This dilutes all shareholders proportionally:
+
+```
+New shares minted = fee_amount / share_price
+```
+
+These shares are split according to the revenue split ratio and sent to the protocol treasury and curator wallets.
+
+## High-Water Mark
+
+Performance fees use a high-water mark (HWM) mechanism:
+
+- The HWM tracks the highest share price ever achieved
+- Performance fees are only charged on gains above the HWM
+- After a drawdown, no performance fees are charged until the previous high is exceeded
+- This prevents double-charging investors who experience losses

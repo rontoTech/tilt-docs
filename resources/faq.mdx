@@ -1,0 +1,90 @@
+---
+title: FAQ
+description: "Frequently asked questions about Tilt Protocol"
+---
+
+# Frequently Asked Questions
+
+## General
+
+<AccordionGroup>
+  <Accordion title="What is Tilt Protocol?">
+    Tilt Protocol is the Operating System for Decentralized Hedge Funds. It provides on-chain infrastructure for anyone to create, manage, and invest in tokenized investment strategies on Robinhood L2.
+  </Accordion>
+
+  <Accordion title="What blockchain does Tilt run on?">
+    Tilt runs on Robinhood L2, an Arbitrum Orbit chain purpose-built for real-world asset (RWA) trading. It offers sub-cent transactions, ~250ms finality, and institutional-grade liquidity.
+  </Accordion>
+
+  <Accordion title="Is Tilt live?">
+    Tilt is currently live on Robinhood L2 Testnet (Chain ID: 46630). Mainnet launch is planned.
+  </Accordion>
+
+  <Accordion title="Is Tilt open source?">
+    The smart contracts are available under the Business Source License 1.1. Documentation and developer tools are open.
+  </Accordion>
+</AccordionGroup>
+
+## For Investors
+
+<AccordionGroup>
+  <Accordion title="Can I lose money?">
+    Yes. Tilt vaults hold baskets of assets that fluctuate in value. If the underlying portfolio declines, the value of your shares decreases. Only invest what you can afford to lose.
+  </Accordion>
+
+  <Accordion title="Can I withdraw at any time?">
+    Yes. Withdrawals are never paused — this is enforced by the smart contract. You can always exit a vault regardless of market conditions.
+  </Accordion>
+
+  <Accordion title="Is there a minimum deposit?">
+    There is no meaningful minimum beyond dust amounts. Any amount of tiltUSDC can be deposited.
+  </Accordion>
+
+  <Accordion title="What fees do I pay?">
+    Entry fee (default 0.30%) on deposit, exit fee (default 0.50%) on withdrawal, plus management fees (0.50% annually) and performance fees (15% of gains above high-water mark) accrued over time. See [Fee Structure](/concepts/fees) for details.
+  </Accordion>
+
+  <Accordion title="How do I get tiltUSDC?">
+    On testnet, use the faucet button in the app. On mainnet, tiltUSDC will be available through bridges and exchanges.
+  </Accordion>
+</AccordionGroup>
+
+## For Fund Managers
+
+<AccordionGroup>
+  <Accordion title="How do I create a fund?">
+    Go to [tiltprotocol.com/create](https://www.tiltprotocol.com/create), connect your wallet, and follow the 5-step wizard. See [Quickstart](/fund-managers/quickstart) for a full walkthrough.
+  </Accordion>
+
+  <Accordion title="Can I change my fund's allocation after creation?">
+    Yes. You can propose new target weights at any time. Changes are subject to a time-lock delay to protect investors.
+  </Accordion>
+
+  <Accordion title="How do I earn money as a curator?">
+    You earn a configurable share (up to 80%) of all fees collected by your vault — entry, exit, management, and performance fees. The more AUM your fund attracts and the better it performs, the more you earn.
+  </Accordion>
+
+  <Accordion title="Can I add or remove assets from my fund?">
+    Weight changes can include new assets (from the approved token list) or remove existing assets (by setting their weight to 0). All changes go through the time-lock process.
+  </Accordion>
+</AccordionGroup>
+
+## Technical
+
+<AccordionGroup>
+  <Accordion title="What is ERC-4626?">
+    ERC-4626 is the Ethereum standard for tokenized vaults. It defines a standard interface for deposit, withdraw, and accounting functions, making Tilt vaults composable with the broader DeFi ecosystem.
+  </Accordion>
+
+  <Accordion title="How are token prices determined?">
+    Prices are sourced from multiple providers (Yahoo Finance, Financial Modeling Prep, Alpha Vantage) and updated on-chain by the backend oracle service. On mainnet, prices will be sourced from decentralized oracle networks.
+  </Accordion>
+
+  <Accordion title="What happens if a token price is stale?">
+    The vault uses the most recently reported price. The backend service updates prices frequently. In the future, freshness checks will reject stale data.
+  </Accordion>
+
+  <Accordion title="Can vaults be upgraded?">
+    Yes. Vaults use the BeaconProxy pattern, allowing the protocol to upgrade vault logic without redeploying individual vaults. State is preserved across upgrades.
+  </Accordion>
+</AccordionGroup>

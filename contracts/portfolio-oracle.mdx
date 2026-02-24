@@ -1,0 +1,45 @@
+---
+title: PortfolioOracle
+description: "On-chain storage for politician portfolio weights"
+---
+
+# PortfolioOracle
+
+The `PortfolioOracle` stores politician portfolio allocations on-chain. It serves as the weight source for `PoliticianVault` instances.
+
+## How It Works
+
+1. The backend oracle service monitors STOCK Act filings
+2. Filings are parsed into portfolio weights (token addresses + basis points)
+3. An authorized reporter calls `updatePortfolio(politicianId, tokens, weights)`
+4. The update is stored on-chain with a timestamp
+5. `PoliticianVault` contracts read weights via `getPortfolio(politicianId)`
+
+## Data Flow
+
+```
+House Stock Watcher API
+  → Backend Fetcher (poll every 15 min)
+    → Parser (normalize trades → BPS weights)
+      → Reporter (sign + submit tx)
+        → PortfolioOracle.updatePortfolio()
+          → PoliticianVault.getTargetWeights()
+            → RebalanceEngine.executeRebalance()
+```
+
+## Authorization
+
+Only authorized reporter addresses can update portfolio data. The reporter wallet is managed by the backend service and secured off-chain.
+
+## Freshness
+
+Each portfolio update includes a timestamp. Consuming contracts can check freshness to avoid acting on stale data.
+
+## ChainlinkAdapter
+
+The `ChainlinkAdapter` bridges Chainlink Functions (off-chain API calls) and Chainlink Automation (periodic triggers) to the `PortfolioOracle`. It handles:
+
+- Constructing off-chain API requests for filing data
+- Processing responses into portfolio weight arrays
+- Error recovery and retry logic
+- Periodic trigger scheduling

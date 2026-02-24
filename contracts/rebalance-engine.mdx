@@ -1,0 +1,45 @@
+---
+title: RebalanceEngine
+description: "Stateless trade executor for vault rebalancing"
+---
+
+# RebalanceEngine
+
+The `RebalanceEngine` is a stateless contract that calculates and executes the trades needed to rebalance a vault's portfolio.
+
+## How It Works
+
+When a vault triggers rebalancing:
+
+1. **Calculate**: The engine compares current token weights against target weights
+2. **Plan**: It generates a set of `TradeOrder` structs — sells for over-weight tokens, buys for under-weight tokens
+3. **Execute**: Trades are executed through the `TokenRouter` with slippage protection
+
+## Trade Execution
+
+```solidity
+struct TradeOrder {
+    address tokenIn;
+    address tokenOut;
+    uint256 amountIn;
+    uint256 minAmountOut;
+}
+```
+
+- `tokenIn` / `tokenOut`: the swap pair
+- `amountIn`: exact amount to sell
+- `minAmountOut`: slippage protection (minimum acceptable output)
+
+All trades route through tiltUSDC as the base asset:
+- **Sell**: overWeight token → tiltUSDC
+- **Buy**: tiltUSDC → underWeight token
+
+## Authorization
+
+Only registered vaults can call `executeRebalance()`. The factory automatically authorizes new vaults on the engine during deployment.
+
+The vault owner or `RebalanceEngine` can also set authorized callers for triggering rebalances externally (e.g., Chainlink Keepers).
+
+## Slippage Protection
+
+Every trade includes a `minAmountOut` parameter calculated from the oracle price minus the configured slippage tolerance. If the execution price is worse than this minimum, the trade reverts.

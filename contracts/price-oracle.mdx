@@ -1,0 +1,56 @@
+---
+title: PriceOracle
+description: "Ticker-based price query wrapper contract"
+---
+
+# PriceOracle
+
+The `PriceOracle` is a convenience wrapper that lets anyone query asset prices by ticker symbol (e.g., `"NVDA"`, `"AAPL"`) instead of by token address.
+
+## Interface
+
+```solidity
+contract PriceOracle {
+    function getTokenPrice(string calldata ticker) external view returns (uint256 priceUsd18);
+    function getTokenPrices(string[] calldata tickers) external view returns (uint256[] memory);
+    function resolveToken(string calldata ticker) external view returns (address);
+}
+```
+
+## Ticker Resolution
+
+The oracle resolves tickers through the `StockTokenFactory`:
+
+1. Try `tokenBySymbol(ticker)` — matches if the ticker is already prefixed (e.g., `"tiltNVDA"`)
+2. If not found, try `tokenBySymbol("tilt" + ticker)` — matches raw tickers (e.g., `"NVDA"`)
+3. If neither resolves, revert with `TokenNotFound(ticker)`
+
+This means both `getTokenPrice("NVDA")` and `getTokenPrice("tiltNVDA")` return the same result.
+
+## Price Source
+
+Prices come from the `TokenRouter.tokenPrices()` mapping, which is updated by the backend price service using data aggregated from:
+
+- Yahoo Finance
+- Financial Modeling Prep (FMP)
+- Alpha Vantage
+
+All prices are stored as 18-decimal USD values (e.g., $192.00 = `192000000000000000000`).
+
+## Error Handling
+
+| Error | Cause |
+|---|---|
+| `TokenNotFound(ticker)` | Ticker doesn't resolve to any known token |
+| `PriceNotSet(ticker)` | Token exists but has no price data (price = 0) |
+
+## Dependencies
+
+The PriceOracle references two other contracts:
+
+- `ITokenRouter` — for reading `tokenPrices(address)` storage
+- `IStockTokenFactory` — for resolving `tokenBySymbol(string)` lookups
+
+Both addresses are set as immutables in the constructor.
+
+See [Price Oracle API](/developers/price-oracle-api) for usage examples.

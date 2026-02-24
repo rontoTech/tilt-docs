@@ -1,0 +1,74 @@
+---
+title: Security
+description: "Access control, safety mechanisms, and security model"
+---
+
+# Security
+
+Tilt Protocol is designed with multiple layers of protection for investors, fund managers, and the protocol itself.
+
+## Access Control
+
+| Role | Capabilities |
+|---|---|
+| **Protocol Owner** | Deploy factories, configure fees, pause vaults, upgrade beacons |
+| **Curator (Fund Manager)** | Propose weight changes, trigger rebalance (own vault only) |
+| **Vault Factory** | Deploy vaults, authorize on engine, configure fees |
+| **RebalanceEngine** | Execute trades on behalf of authorized vaults |
+| **Anyone** | Deposit, withdraw, call `allocateIdleAssets()` |
+
+## Safety Mechanisms
+
+### Withdrawals Never Paused
+
+The most critical safety guarantee: **investors can always withdraw their funds**. This is enforced at the smart contract level and cannot be overridden by the protocol owner, curator, or any other party. Even if a vault is paused for other operations, withdrawals remain open.
+
+### Time-Lock on Weight Changes
+
+For curator-managed vaults, all weight changes must go through a time-lock delay. This prevents:
+- Sudden portfolio shifts without investor awareness
+- Curator rug-pulls (dumping into illiquid assets)
+- Panic-driven strategy changes
+
+Investors can see pending weight changes and withdraw before they take effect.
+
+### Dead Shares
+
+Every vault permanently locks 1,000 shares to `address(1)` on creation. This prevents the classic ERC-4626 inflation attack where a first depositor manipulates share pricing through donation.
+
+### Reentrancy Protection
+
+All state-changing vault operations use reentrancy guards. This prevents complex attack vectors involving callback functions during deposits, withdrawals, or rebalancing.
+
+### Slippage Protection
+
+Every trade executed through the `RebalanceEngine` includes a minimum acceptable output (`minAmountOut`). If market conditions or oracle prices would result in a worse execution, the trade reverts.
+
+### Token Count Cap
+
+Vaults can hold a maximum of 30 different tokens. This prevents gas DoS attacks where an attacker creates a vault with an excessive number of tokens, making withdrawals prohibitively expensive.
+
+### High-Water Mark
+
+Performance fees are only charged on gains above the high-water mark. This prevents double-charging investors after drawdowns and ensures fee fairness.
+
+### Rounding Protection
+
+Withdrawal calculations use ceiling-division rounding. This ensures the vault never rounds in the withdrawer's favor, protecting remaining depositors from rounding exploits.
+
+## Approved Token List
+
+The `UserVaultFactory` maintains an approved token list. Only tokens on this list can be included in user-created vaults. This prevents:
+- Inclusion of unpriced tokens (that would break NAV calculation)
+- Inclusion of malicious token contracts
+- Inclusion of illiquid tokens that can't be traded
+
+## Audit Status
+
+<Warning>
+  Tilt Protocol is currently on testnet and has not undergone a formal security audit. Do not deposit real funds. A comprehensive audit will be completed before mainnet launch.
+</Warning>
+
+## Responsible Disclosure
+
+If you discover a security vulnerability, please report it responsibly. Contact the team directly rather than disclosing publicly.

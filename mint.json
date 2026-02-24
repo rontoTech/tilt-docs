@@ -1,0 +1,129 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "Tilt Protocol",
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#6366f1",
+    "light": "#818cf8",
+    "dark": "#4f46e5",
+    "anchors": {
+      "from": "#6366f1",
+      "to": "#a855f7"
+    }
+  },
+  "topbarLinks": [
+    {
+      "name": "Launch App",
+      "url": "https://www.tiltprotocol.com"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Launch App",
+    "url": "https://www.tiltprotocol.com"
+  },
+  "tabs": [
+    {
+      "name": "Contracts",
+      "url": "contracts"
+    },
+    {
+      "name": "Developers",
+      "url": "developers"
+    }
+  ],
+  "anchors": [
+    {
+      "name": "GitHub",
+      "icon": "github",
+      "url": "https://github.com/rontoTech"
+    },
+    {
+      "name": "App",
+      "icon": "rocket",
+      "url": "https://www.tiltprotocol.com"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Getting Started",
+      "pages": [
+        "introduction",
+        "vision"
+      ]
+    },
+    {
+      "group": "Concepts",
+      "pages": [
+        "concepts/how-it-works",
+        "concepts/vault-architecture",
+        "concepts/strategies",
+        "concepts/supported-assets",
+        "concepts/fees",
+        "concepts/idle-cash",
+        "concepts/robinhood-l2"
+      ]
+    },
+    {
+      "group": "Fund Managers",
+      "pages": [
+        "fund-managers/quickstart",
+        "fund-managers/create-fund",
+        "fund-managers/manage-strategy",
+        "fund-managers/fee-configuration",
+        "fund-managers/best-practices"
+      ]
+    },
+    {
+      "group": "Investors",
+      "pages": [
+        "investors/getting-started",
+        "investors/discover-strategies",
+        "investors/deposit-withdraw",
+        "investors/understanding-returns"
+      ]
+    },
+    {
+      "group": "Resources",
+      "pages": [
+        "resources/flagship-strategies",
+        "resources/faq",
+        "resources/security",
+        "resources/glossary",
+        "resources/links"
+      ]
+    },
+    {
+      "group": "Contracts",
+      "pages": [
+        "contracts/architecture",
+        "contracts/base-vault",
+        "contracts/user-vault",
+        "contracts/politician-vault",
+        "contracts/rebalance-engine",
+        "contracts/token-router",
+        "contracts/fee-manager",
+        "contracts/portfolio-oracle",
+        "contracts/price-oracle",
+        "contracts/deployments"
+      ]
+    },
+    {
+      "group": "Developers",
+      "pages": [
+        "developers/overview",
+        "developers/sdk-quickstart",
+        "developers/on-chain-api",
+        "developers/price-oracle-api",
+        "developers/webhooks-events"
+      ]
+    }
+  ],
+  "footerSocials": {
+    "github": "https://github.com/rontoTech",
+    "x": "https://x.com/taborgroup"
+  }
+}

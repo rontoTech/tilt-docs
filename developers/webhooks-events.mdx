@@ -1,0 +1,103 @@
+---
+title: Events & Monitoring
+description: "Track vault activity via on-chain events"
+---
+
+# Events and Monitoring
+
+Tilt vaults emit standard ERC-4626 events plus custom events for portfolio management. You can monitor these to track vault activity, build notifications, or feed data into analytics systems.
+
+## ERC-4626 Standard Events
+
+```solidity
+event Deposit(address indexed sender, address indexed owner, uint256 assets, uint256 shares);
+event Withdraw(address indexed sender, address indexed receiver, address indexed owner, uint256 assets, uint256 shares);
+event Transfer(address indexed from, address indexed to, uint256 value);
+```
+
+### Deposit
+
+Emitted when an investor deposits tiltUSDC and receives shares.
+
+### Withdraw
+
+Emitted when an investor redeems shares for tiltUSDC.
+
+### Transfer
+
+Standard ERC-20 transfer event for vault share movements.
+
+## Monitoring with ethers.js
+
+```javascript
+const vault = new ethers.Contract(VAULT_ADDRESS, vaultAbi, provider);
+
+// Listen for new deposits
+vault.on("Deposit", (sender, owner, assets, shares) => {
+  console.log(`Deposit: ${ethers.formatUnits(assets, 6)} tiltUSDC from ${sender}`);
+  console.log(`Shares minted: ${ethers.formatUnits(shares, 18)}`);
+});
+
+// Listen for withdrawals
+vault.on("Withdraw", (sender, receiver, owner, assets, shares) => {
+  console.log(`Withdrawal: ${ethers.formatUnits(assets, 6)} tiltUSDC to ${receiver}`);
+  console.log(`Shares burned: ${ethers.formatUnits(shares, 18)}`);
+});
+```
+
+## Querying Historical Events
+
+```javascript
+// Get all deposits in the last 1000 blocks
+const filter = vault.filters.Deposit();
+const events = await vault.queryFilter(filter, -1000);
+
+events.forEach(event => {
+  console.log({
+    block: event.blockNumber,
+    depositor: event.args.sender,
+    amount: ethers.formatUnits(event.args.assets, 6),
+    shares: ethers.formatUnits(event.args.shares, 18),
+  });
+});
+```
+
+## Monitoring with viem
+
+```typescript
+import { createPublicClient, http, parseAbiItem } from "viem";
+
+const client = createPublicClient({
+  chain: robinhoodL2,
+  transport: http(),
+});
+
+const logs = await client.getLogs({
+  address: VAULT_ADDRESS,
+  event: parseAbiItem("event Deposit(address indexed sender, address indexed owner, uint256 assets, uint256 shares)"),
+  fromBlock: "earliest",
+});
+```
+
+## Vault Discovery Events
+
+Monitor the `VaultRegistry` for new vault deployments:
+
+```javascript
+const registry = new ethers.Contract(REGISTRY_ADDRESS, [
+  "event VaultRegistered(address indexed vault, uint8 vaultType, address indexed curator)",
+], provider);
+
+registry.on("VaultRegistered", (vault, vaultType, curator) => {
+  console.log(`New vault: ${vault} by ${curator} (type: ${vaultType})`);
+});
+```
+
+## Building a Notification System
+
+Combine event monitoring with external services:
+
+1. **Listen** for Deposit/Withdraw events across all active vaults
+2. **Process** events to calculate metrics (AUM changes, share price movements)
+3. **Alert** via Telegram, Discord, or email when thresholds are crossed
+4. **Store** event data for historical analytics and track record computation

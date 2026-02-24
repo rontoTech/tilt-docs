@@ -1,0 +1,88 @@
+---
+title: BaseVault
+description: "Abstract ERC-4626 vault base — deposits, withdrawals, NAV, and allocation"
+---
+
+# BaseVault
+
+`BaseVault` is the abstract base contract that all Tilt vaults inherit from. It implements the ERC-4626 tokenized vault standard with multi-token portfolio management.
+
+## Overview
+
+BaseVault manages the full lifecycle of a decentralized fund:
+- Accepting deposits (minting shares)
+- Processing withdrawals (burning shares, liquidating tokens)
+- Calculating NAV across multiple held tokens
+- Allocating idle capital into target positions
+- Rebalancing the portfolio to match target weights
+- Accruing and distributing fees
+
+## Deposit Flow
+
+1. Investor calls `deposit(assets, receiver)` with tiltUSDC
+2. Entry fee is deducted and sent to `FeeManager`
+3. Shares are minted to the receiver: `shares = (netAssets * totalSupply) / totalAssets`
+4. Deposited tiltUSDC is added to `unallocatedDeposits`
+5. Funds remain idle until `allocateIdleAssets()` is called
+
+## Withdrawal Flow
+
+1. Investor calls `withdraw(assets, receiver, owner)` or `redeem(shares, receiver, owner)`
+2. The vault calculates the tiltUSDC amount owed
+3. If insufficient idle tiltUSDC, `_ensureBaseLiquidity()` auto-liquidates held tokens via `TokenRouter`
+4. Exit fee is deducted
+5. Net tiltUSDC is transferred to the receiver
+6. Shares are burned
+
+Withdrawals are **never paused** — this is a core safety invariant.
+
+## NAV Calculation
+
+```solidity
+function totalAssets() public view returns (uint256) {
+    uint256 total = baseAsset.balanceOf(address(this));
+    for (uint i = 0; i < heldTokens.length; i++) {
+        uint256 balance = heldTokens[i].balanceOf(address(this));
+        uint256 price = tokenRouter.getTokenPrice(heldTokens[i]);
+        total += (balance * price) / 1e18; // normalize to base asset decimals
+    }
+    return total;
+}
+```
+
+## Allocation
+
+`allocateIdleAssets()` deploys unallocated tiltUSDC into target positions:
+
+- Permissionless — anyone can call it
+- Calculates buy amounts: `buyAmount = allocatable * weightBps / 10000`
+- Executes purchases through `TokenRouter`
+- Only buys; never sells existing positions
+
+## Rebalancing
+
+`rebalance()` aligns the portfolio to target weights:
+
+- Calculates current weight of each token
+- Determines sell orders for over-weight tokens
+- Determines buy orders for under-weight tokens
+- Executes all trades through `RebalanceEngine`
+- Restricted to authorized callers (curator or engine)
+
+## Fee Accrual
+
+- **Entry/exit fees**: collected in tiltUSDC at transaction time
+- **Management fees**: accrued continuously via share dilution
+- **Performance fees**: accrued above high-water mark via share dilution
+- All fees split between protocol treasury and curator via `FeeManager`
+
+## Dead Shares
+
+The first 1,000 shares are minted to `address(1)` on vault initialization. This permanently locks a small amount of shares, preventing the first-depositor inflation attack common to ERC-4626 vaults.
+
+## Safety
+
+- Reentrancy guards on all state-changing operations
+- Ceiling-division rounding on withdrawals (protects vault from rounding exploits)
+- Token count cap (30 max) prevents gas DoS
+- Slippage protection on all swaps

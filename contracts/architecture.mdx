@@ -1,0 +1,119 @@
+---
+title: Contract Architecture
+description: "Smart contract map, dependencies, and system design"
+---
+
+# Contract Architecture
+
+Tilt Protocol's smart contracts are organized into five modules: core vaults, factories, oracle, rebalancing, and fee management.
+
+## System Overview
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                       Frontend (UI)                         │
+└──────────┬──────────────────────────────────┬───────────────┘
+           │ deposit / withdraw / create      │ read state
+           ▼                                  ▼
+┌─────────────────────┐          ┌──────────────────────────┐
+│   VaultFactory(s)   │          │     VaultRegistry        │
+│  Politician / User  │          │   on-chain discovery     │
+└────────┬────────────┘          └──────────────────────────┘
+         │ deploys (BeaconProxy)
+         ▼
+┌─────────────────────────────────────────────────────────────┐
+│                     BaseVault (ERC-4626)                     │
+│  ┌─────────────────┐  ┌──────────────────┐                  │
+│  │ PoliticianVault │  │    UserVault      │                  │
+│  │ (oracle-driven) │  │ (curator-managed) │                  │
+│  └────────┬────────┘  └────────┬─────────┘                  │
+│           │ getTargetWeights() │                             │
+│           ▼                    ▼                             │
+│  ┌─────────────────┐  ┌──────────────────┐                  │
+│  │ PortfolioOracle │  │ Internal weights │                  │
+│  └─────────────────┘  └──────────────────┘                  │
+└───────────────────────────┬─────────────────────────────────┘
+                            │ rebalance / allocate
+                            ▼
+                 ┌─────────────────────┐
+                 │   RebalanceEngine   │
+                 │  trade calculation  │
+                 └──────────┬──────────┘
+                            │ swap
+                            ▼
+                 ┌─────────────────────┐
+                 │    TokenRouter      │
+                 │  price oracle +     │
+                 │  swap execution     │
+                 └─────────────────────┘
+
+        ┌──────────────┐    ┌───────────────────┐
+        │  FeeManager  │    │   PriceOracle     │
+        │  fee splits  │    │ ticker → price    │
+        └──────────────┘    └───────────────────┘
+```
+
+## Directory Layout
+
+```
+src/
+├── core/
+│   ├── BaseVault.sol              # Abstract ERC-4626 vault base
+│   ├── PoliticianVault.sol        # Oracle-driven vault
+│   ├── UserVault.sol              # Curator-managed vault
+│   ├── PoliticianVaultFactory.sol # BeaconProxy factory (permissioned)
+│   ├── UserVaultFactory.sol       # BeaconProxy factory (permissionless)
+│   ├── VaultRegistry.sol          # On-chain vault discovery
+│   └── FeeManager.sol             # Protocol + curator fee splits
+├── interfaces/
+│   ├── IBaseVault.sol
+│   ├── IPortfolioOracle.sol
+│   ├── IRebalanceEngine.sol
+│   └── ITokenRouter.sol
+├── oracle/
+│   ├── PortfolioOracle.sol        # Politician portfolio weights
+│   ├── ChainlinkAdapter.sol       # Chainlink Functions + Automation
+│   └── PriceOracle.sol            # Ticker-based price queries
+├── rebalance/
+│   ├── RebalanceEngine.sol        # Trade calculation and execution
+│   └── TokenRouter.sol            # Mock DEX router (testnet)
+└── tokens/
+    └── MockStockToken.sol         # Mock ERC-20 stock tokens (testnet)
+```
+
+## Proxy Architecture
+
+All vaults are deployed as **BeaconProxy** instances. This means:
+
+- Each vault type has a single **UpgradeableBeacon** pointing to the implementation contract
+- Individual vaults are lightweight proxy contracts that delegate to the beacon
+- The protocol can upgrade all vaults of a type simultaneously by updating the beacon
+- Individual vault state is preserved across upgrades
+
+```
+UpgradeableBeacon (UserVault)
+  └─ implementation: UserVault logic contract
+  └─ BeaconProxy #1 (Fund A) ──→ delegates to beacon
+  └─ BeaconProxy #2 (Fund B) ──→ delegates to beacon
+  └─ BeaconProxy #3 (Fund C) ──→ delegates to beacon
+```
+
+## Key Interfaces
+
+| Interface | Purpose |
+|---|---|
+| `IBaseVault` | Vault lifecycle: `TokenWeight` struct, config getters |
+| `IPortfolioOracle` | `getPortfolio(politicianId)` → token/weight arrays |
+| `IRebalanceEngine` | `calculateRebalance()`, `executeRebalance()`, `TradeOrder` struct |
+| `ITokenRouter` | `swap()`, `getQuote()`, `getTokenPrice()`, pair support |
+
+## Tech Stack
+
+| | |
+|---|---|
+| **Framework** | Foundry |
+| **Solidity** | 0.8.24 (optimizer: 200 runs, via-ir) |
+| **Dependencies** | OpenZeppelin Contracts v5, Chainlink |
+| **Target Chain** | Robinhood L2 (Arbitrum Orbit, Chain ID 46630) |
+| **Proxy Pattern** | UpgradeableBeacon + BeaconProxy |
+| **License** | BUSL-1.1 |

@@ -1,0 +1,65 @@
+---
+title: Fee Configuration
+description: "Setting curator fees and understanding the revenue split"
+---
+
+# Fee Configuration
+
+As a fund manager (curator), you earn a share of the fees collected by your vault. This page explains how to configure your fee share and how revenue flows.
+
+## Setting Your Fee Share
+
+When creating a vault, you specify your **curator fee share** — the percentage of total fees you receive. The remaining goes to the protocol treasury.
+
+| Curator Share | Protocol Share | Notes |
+|---|---|---|
+| 0% | 100% | Altruistic — all fees to protocol |
+| 40% | 60% | Conservative — balanced split |
+| 60% | 40% | Standard — majority to curator |
+| 80% | 20% | Maximum — highest curator take |
+
+The curator share applies to **all fee types** (entry, exit, management, performance).
+
+<Warning>
+  The curator fee share is set at vault creation and cannot be changed afterward. Choose carefully.
+</Warning>
+
+## Fee Collection Mechanics
+
+### Entry and Exit Fees
+
+Collected in tiltUSDC at the time of deposit or withdrawal. Sent directly to the `FeeManager`, which splits and distributes to curator and protocol wallets.
+
+### Management Fees
+
+Accrue continuously via **share dilution**. The protocol mints new vault shares to fee recipients proportional to the annualized rate applied to total AUM. This dilutes all shareholders equally.
+
+### Performance Fees
+
+Accrue via share dilution, but only when the vault's share price exceeds the **high-water mark** (previous all-time high). This means:
+
+- No performance fees during drawdowns
+- No double-charging — fees only on new gains
+- HWM resets only when a new peak is reached
+
+## Revenue Example
+
+Consider a fund with 80% curator share:
+
+```
+Fund AUM: 100,000 tiltUSDC
+Annual management fee: 0.50% → 500 tiltUSDC equivalent in shares
+  └─ Curator receives: 400 tiltUSDC worth of shares (80%)
+  └─ Protocol receives: 100 tiltUSDC worth of shares (20%)
+
+Performance above HWM: 20,000 tiltUSDC gain
+Performance fee: 15% → 3,000 tiltUSDC equivalent in shares
+  └─ Curator receives: 2,400 tiltUSDC worth of shares (80%)
+  └─ Protocol receives: 600 tiltUSDC worth of shares (20%)
+```
+
+## Best Practices
+
+- **Start with 40-60%** if you're building a track record — lower fees attract more depositors
+- **Use 80%** only if you have a proven strategy or strong brand — investors accept higher fees for demonstrated alpha
+- **Remember**: your seed deposit earns returns too — you're invested alongside your depositors

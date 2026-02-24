@@ -1,0 +1,49 @@
+---
+title: PoliticianVault
+description: "Oracle-driven vaults that automatically track politician stock portfolios"
+---
+
+# PoliticianVault
+
+`PoliticianVault` extends `BaseVault` with automatic weight management driven by the `PortfolioOracle`. These are the flagship strategies that demonstrate Tilt Protocol's capabilities.
+
+## How It Works
+
+1. The backend oracle service monitors STOCK Act filings from Congress
+2. New trade disclosures are processed into portfolio weights (basis points)
+3. The reporter calls `PortfolioOracle.updatePortfolio()` on-chain
+4. `PoliticianVault.getTargetWeights()` reads from the oracle
+5. Rebalancing aligns holdings to the updated weights
+
+The entire process is automated — no manual intervention required.
+
+## Key Differences from UserVault
+
+| | PoliticianVault | UserVault |
+|---|---|---|
+| Weight source | PortfolioOracle (external) | Curator sets directly |
+| Creation | Permissioned (protocol owner) | Permissionless |
+| Rebalancing | Automatic (engine/owner) | Curator-triggered |
+| Time-lock | Not needed (oracle trusted) | Required |
+| Fee split | 100% protocol | Configurable curator share |
+
+## Rebalancing
+
+- Restricted to the `RebalanceEngine` or vault owner
+- A configurable `minRebalanceInterval` prevents excessive rebalancing
+- Triggered automatically when the oracle publishes weight changes
+
+## Deployed Vaults
+
+Six politician-tracking vaults are currently live on testnet:
+
+| Vault | Symbol | Politician |
+|---|---|---|
+| Tilt Pelosi Index | tiltPELOSI | Nancy Pelosi |
+| Tilt Tuberville Index | tiltTUBE | Tommy Tuberville |
+| Tilt Crenshaw Index | tiltCREN | Dan Crenshaw |
+| Tilt McCaul Index | tiltMCCAUL | Michael McCaul |
+| Tilt Wyden Index | tiltWYDEN | Ron Wyden |
+| Tilt Sessions Index | tiltSESS | Pete Sessions |
+
+These vaults serve as proof that Tilt's infrastructure can power real, automated, alpha-generating strategies. They showcase the full pipeline: off-chain data ingestion, on-chain oracle updates, automatic rebalancing, and transparent investor access.

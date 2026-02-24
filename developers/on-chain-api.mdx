@@ -1,0 +1,98 @@
+---
+title: On-Chain API Reference
+description: "Complete reference for vault read and write functions"
+---
+
+# On-Chain API Reference
+
+All Tilt vaults implement the ERC-4626 standard plus additional functions for portfolio management.
+
+## Read Functions
+
+### Vault State
+
+| Function | Returns | Description |
+|---|---|---|
+| `totalAssets()` | `uint256` | Total vault value in tiltUSDC (base asset + held tokens at oracle prices) |
+| `sharePrice()` | `uint256` | NAV per share (18 decimals) |
+| `totalSupply()` | `uint256` | Total outstanding shares |
+| `baseAsset()` | `address` | Base asset address (tiltUSDC) |
+| `name()` | `string` | Vault name |
+| `symbol()` | `string` | Vault share token symbol |
+| `curator()` | `address` | Curator (fund manager) address |
+
+### Portfolio
+
+| Function | Returns | Description |
+|---|---|---|
+| `getTargetWeights()` | `TokenWeight[]` | Array of `(token, weightBps)` target allocations |
+| `getCurrentWeights()` | `TokenWeight[]` | Array of `(token, weightBps)` actual allocations |
+| `getHeldTokens()` | `address[]` | List of all token addresses held by the vault |
+| `getVaultConfig()` | `VaultConfig` | Fee configuration (entry, exit, management, performance BPS) |
+
+### User Balances
+
+| Function | Returns | Description |
+|---|---|---|
+| `balanceOf(address)` | `uint256` | Share balance of an account |
+| `convertToShares(uint256 assets)` | `uint256` | How many shares a given deposit would mint |
+| `convertToAssets(uint256 shares)` | `uint256` | How much tiltUSDC a given share count is worth |
+
+## Write Functions
+
+### Investor Operations
+
+| Function | Parameters | Description |
+|---|---|---|
+| `deposit(uint256 assets, address receiver)` | Amount in tiltUSDC, recipient of shares | Deposit and receive vault shares |
+| `withdraw(uint256 assets, address receiver, address owner)` | Amount in tiltUSDC, recipient, share owner | Withdraw a specific tiltUSDC amount |
+| `redeem(uint256 shares, address receiver, address owner)` | Share count, recipient, share owner | Burn shares and receive proportional tiltUSDC |
+| `depositWithPermit(...)` | Amount + EIP-2612 permit signature | Gasless approval + deposit in one transaction |
+
+### Fund Manager Operations
+
+| Function | Parameters | Description |
+|---|---|---|
+| `allocateIdleAssets()` | None | Deploy idle tiltUSDC into target positions (permissionless) |
+| `rebalance()` | None | Sell over-weight and buy under-weight tokens to match targets |
+
+### Data Types
+
+```solidity
+struct TokenWeight {
+    address token;
+    uint16 weightBps;  // Weight in basis points (10000 = 100%)
+}
+
+struct VaultConfig {
+    uint16 entryFeeBps;
+    uint16 exitFeeBps;
+    uint16 managementFeeBps;
+    uint16 performanceFeeBps;
+    uint256 rebalanceThresholdBps;
+}
+```
+
+## Factory Functions
+
+### UserVaultFactory
+
+| Function | Description |
+|---|---|
+| `createUserVault(string name, string symbol, address[] tokens, uint16[] weights, uint16 curatorFeeBps, uint256 seedDeposit, string metadataURI)` | Deploy a new vault (payable — requires creation fee) |
+| `vaultCreationFee()` | Returns the ETH fee required to create a vault |
+| `minSeedDeposit()` | Returns minimum tiltUSDC seed deposit |
+| `getApprovedTokens()` | Returns list of tokens eligible for vault inclusion |
+| `getAllVaults()` | Returns addresses of all vaults created by this factory |
+
+## Registry Functions
+
+### VaultRegistry
+
+| Function | Description |
+|---|---|
+| `getAllVaults()` | Returns all registered vaults with metadata |
+| `getVaultInfo(address vault)` | Returns a single vault's registration info |
+| `getVaultsByType(uint8 vaultType)` | Filter by type (0 = politician, 1 = user) |
+| `getVaultsByCurator(address curator)` | Filter by curator address |
+| `totalVaults()` | Total number of registered vaults |

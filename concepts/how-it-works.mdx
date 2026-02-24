@@ -1,0 +1,79 @@
+---
+title: How It Works
+description: "End-to-end flow: create a fund, trade, accept deposits"
+---
+
+# How Tilt Protocol Works
+
+Tilt Protocol connects three participants in a permissionless, on-chain marketplace for investment strategies.
+
+## The Three Roles
+
+<CardGroup cols={3}>
+  <Card title="Fund Manager" icon="user-tie">
+    Creates and manages a fund. Sets the strategy (asset allocation and weights). Earns curator fees.
+  </Card>
+  <Card title="Investor" icon="piggy-bank">
+    Deposits into funds. Earns returns based on the fund's performance. Withdraws anytime.
+  </Card>
+  <Card title="Protocol" icon="gear">
+    Provides infrastructure: vaults, rebalancing, price feeds, fee accounting. Earns protocol fees.
+  </Card>
+</CardGroup>
+
+## End-to-End Flow
+
+### 1. Fund Creation
+
+A fund manager creates a new vault through the Tilt app or directly via smart contracts:
+
+- Choose a name and ticker symbol (e.g., "AI Momentum Fund" / `tiltAIMF`)
+- Select target assets from 100+ available tokens (stocks, ETFs, crypto)
+- Set target weights in basis points (e.g., NVDA 30%, AAPL 20%, TSLA 15%, idle cash 35%)
+- Configure curator fee share
+- Deposit seed capital (minimum required to initialize the vault)
+
+The protocol deploys an ERC-4626 vault, registers it on-chain, and it's immediately discoverable by investors.
+
+### 2. Investor Deposits
+
+Investors browse available strategies on [tiltprotocol.com](https://www.tiltprotocol.com), review track records and holdings, and deposit tiltUSDC into any vault:
+
+- Deposit any amount (no minimums beyond dust)
+- Receive vault shares proportional to current NAV
+- Entry fee deducted (default 0.30%)
+- Funds are held as unallocated deposits until the next allocation cycle
+
+### 3. Capital Allocation
+
+Unallocated deposits are deployed into the fund's target portfolio:
+
+- The vault calculates buy orders based on target weights
+- `RebalanceEngine` executes trades through `TokenRouter`
+- Trades execute at oracle prices with slippage protection
+- Multiple assets purchased in a single batch transaction
+
+### 4. Strategy Execution
+
+The fund manager updates the strategy over time:
+
+- Propose new target weights (subject to time-lock for investor protection)
+- Trigger rebalancing to align holdings with new targets
+- The protocol automatically sells over-weight assets and buys under-weight assets
+
+### 5. Investor Withdrawal
+
+Investors can withdraw at any time — withdrawals are never paused:
+
+- Burn vault shares
+- The vault auto-liquidates held tokens to tiltUSDC
+- Exit fee deducted (default 0.50%)
+- Base asset returned to investor
+
+### 6. Fee Collection
+
+Fees accrue continuously and are enforced by smart contracts:
+
+- **Management fees** accrue via share dilution (annualized)
+- **Performance fees** accrue above a high-water mark
+- Fee revenue splits between the protocol treasury and the curator

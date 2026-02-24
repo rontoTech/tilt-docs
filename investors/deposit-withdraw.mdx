@@ -1,0 +1,72 @@
+---
+title: Deposit & Withdraw
+description: "How to invest in and exit from Tilt Protocol funds"
+---
+
+# Depositing and Withdrawing
+
+## Depositing into a Fund
+
+### How to Deposit
+
+1. Navigate to the vault you want to invest in
+2. Click **Deposit**
+3. Enter the amount of tiltUSDC you want to invest
+4. Approve the tiltUSDC spend (first time only)
+5. Confirm the deposit transaction
+
+### What Happens
+
+- An **entry fee** (default 0.30%) is deducted from your deposit
+- You receive **vault shares** proportional to the current NAV
+- Your deposited tiltUSDC is held as unallocated cash until the next allocation cycle
+- When `allocateIdleAssets()` is called, your capital is deployed into the fund's target positions
+
+### Share Pricing
+
+The number of shares you receive depends on the current share price:
+
+```
+shares_received = (deposit - entry_fee) / share_price
+```
+
+If the share price is $1.05 and you deposit 1,000 tiltUSDC:
+- Entry fee: 3 tiltUSDC
+- Net deposit: 997 tiltUSDC
+- Shares received: 997 / 1.05 = ~949.5 shares
+
+## Withdrawing from a Fund
+
+### How to Withdraw
+
+1. Navigate to the vault you're invested in
+2. Click **Withdraw**
+3. Enter the amount you want to withdraw (in tiltUSDC or shares)
+4. Confirm the transaction
+
+### What Happens
+
+- Your vault shares are **burned**
+- The vault calculates your proportional claim on all assets
+- Held tokens are **auto-liquidated** to tiltUSDC via the TokenRouter
+- An **exit fee** (default 0.50%) is deducted
+- Net tiltUSDC is sent to your wallet
+
+<Note>
+  **Withdrawals are never paused.** You can always exit a fund, regardless of market conditions or vault state. This is enforced by the smart contract.
+</Note>
+
+### Withdrawal Mechanics
+
+The vault handles all the complexity:
+- If there's enough idle tiltUSDC, no token sales are needed
+- If not, the vault sells held tokens proportionally to cover the withdrawal
+- Slippage protection ensures fair execution prices
+- The entire process happens in a single transaction
+
+## Important Notes
+
+- **No lock-ups** — your capital is never locked. Withdraw any time.
+- **No minimums** — withdraw any amount (subject to dust limits).
+- **Fees are transparent** — entry and exit fees are shown before you confirm.
+- **Share price reflects real NAV** — your shares represent actual ownership of the fund's assets, priced using on-chain oracle data.

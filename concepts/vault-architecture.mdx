@@ -1,0 +1,84 @@
+---
+title: Vault Architecture
+description: "ERC-4626 vaults, base asset, share pricing, and NAV calculation"
+---
+
+# Vault Architecture
+
+Every fund on Tilt Protocol is an **ERC-4626 vault** — the standard interface for tokenized vaults on Ethereum. This means Tilt vaults are composable with the broader DeFi ecosystem.
+
+## Core Design
+
+Each vault holds a basket of ERC-20 tokens (representing stocks, ETFs, or crypto) denominated in a single **base asset**: tiltUSDC (a USDC-equivalent stablecoin on Robinhood L2).
+
+```
+Vault (ERC-4626)
+├── Base Asset: tiltUSDC
+├── Held Tokens: [tiltAAPL, tiltNVDA, tiltTSLA, ...]
+├── Target Weights: [3000, 2500, 2000, ...] (basis points)
+├── Shares: represent proportional ownership of all vault assets
+└── Fees: entry, exit, management, performance
+```
+
+## Share Mechanics
+
+### Deposits
+
+When an investor deposits tiltUSDC:
+
+1. Entry fee is deducted (sent to `FeeManager`)
+2. Shares are minted proportional to current NAV: `shares = (deposit * totalShares) / totalAssets`
+3. Deposited funds are held as `unallocatedDeposits` until allocated into the portfolio
+
+### Withdrawals
+
+When an investor withdraws:
+
+1. Shares are burned
+2. The vault calculates the proportional claim on all held assets
+3. Held tokens are auto-liquidated via `TokenRouter` to return tiltUSDC
+4. Exit fee is deducted
+5. Net tiltUSDC is returned to the investor
+
+Withdrawals are **never paused** — investors can always exit regardless of vault state.
+
+### NAV Calculation
+
+```
+totalAssets = tiltUSDC balance
+            + Σ (held_token_balance × token_price_in_USD)
+            for each token in the portfolio
+```
+
+Token prices are sourced from the `TokenRouter` oracle. Share price is simply `totalAssets / totalShares` in 18-decimal precision.
+
+## Dead Shares
+
+The first 1,000 shares of every vault are minted to `address(1)` (burned permanently). This prevents the classic ERC-4626 inflation attack where a first depositor manipulates share pricing through donation.
+
+## Allocation and Rebalancing
+
+Vaults maintain two distinct operations:
+
+**Allocation** — deploys idle tiltUSDC into target positions:
+- Called via `allocateIdleAssets()` (permissionless — anyone can trigger it)
+- Buys target tokens proportional to their weight
+- Only uses unallocated base asset; doesn't sell existing positions
+
+**Rebalancing** — realigns the portfolio to match target weights:
+- Sells over-weight tokens, buys under-weight tokens
+- Restricted to authorized callers (curator or `RebalanceEngine`)
+- Configurable minimum interval between rebalances
+
+## Vault Types
+
+Tilt supports two vault types that share the same `BaseVault` core:
+
+| | Curator Vault | Oracle Vault |
+|---|---|---|
+| **Weight source** | Curator sets weights directly | Oracle feeds weights automatically |
+| **Creation** | Permissionless | Permissioned (protocol owner) |
+| **Rebalancing** | Curator-triggered with time-lock | Automatic when oracle updates |
+| **Use case** | Custom strategies, AI-driven funds | Flagship strategies (e.g., politician trackers) |
+
+Both types are deployed as `BeaconProxy` instances, allowing the protocol to upgrade vault logic without redeploying individual vaults.
