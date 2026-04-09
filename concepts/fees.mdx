@@ -15,7 +15,7 @@ Charged when an investor deposits into a vault.
 
 | | |
 |---|---|
-| **Default** | 0.30% |
+| **Default** | 0.10% |
 | **Maximum** | 1.00% |
 | **Collected in** | tiltUSDC (deducted from deposit) |
 
@@ -31,7 +31,7 @@ Charged when an investor withdraws from a vault.
 
 ### Management Fee
 
-Charged continuously on assets under management (AUM), annualized.
+Charged continuously on assets under mirroring (AUM), annualized.
 
 | | |
 |---|---|
@@ -71,20 +71,18 @@ Fee revenue is split between the protocol treasury and the vault's curator:
 
 | | Protocol | Curator |
 |---|---|---|
-| **Minimum** | 20% | 0% |
-| **Maximum** | 100% | 80% |
+| **Minimum** | 10% | 0% |
+| **Maximum** | 100% | 90% |
 
-The curator's share is configured at vault creation and enforced by `FeeManager`. The protocol always retains at least 20%.
-
-### Oracle Vaults (Flagship)
-
-For protocol-owned vaults (e.g., politician trackers), 100% of fees go to the protocol treasury.
+The curator's share is configured at vault creation and enforced by `FeeManager`. The protocol always retains at least 10%.
 
 ### Curator Vaults (User-Created)
 
-The curator sets their fee share at creation time. For example, a curator requesting 60% share means:
-- 60% of all fees → curator wallet
-- 40% of all fees → protocol treasury
+The curator sets their fee share at creation time. For example, a curator requesting 80% share means:
+- 80% of management and performance fees → curator wallet
+- 20% of management and performance fees → protocol treasury
+
+*Note: All entry and exit fees go directly to the protocol treasury.*
 
 ## Why This Model
 

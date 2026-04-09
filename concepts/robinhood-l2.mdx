@@ -23,8 +23,8 @@ For Tilt, this means fund managers can build portfolios of **real stocks** (not 
 | Metric | Value |
 |---|---|
 | **Transaction cost** | < $0.01 (sub-cent) |
-| **Block time** | ~250ms |
-| **Finality** | ~250ms (soft), inherits Arbitrum/Ethereum security |
+| **Block time** | ~0.1s |
+| **Finality** | ~0.1s (soft), inherits Arbitrum/Ethereum security |
 | **EVM version** | Full equivalence (Solidity, Foundry, Hardhat all work) |
 | **Chain ID** | 46630 |
 
@@ -32,11 +32,12 @@ For Tilt, this means fund managers can build portfolios of **real stocks** (not 
 
 ### Micro-Strategies Are Viable
 
-On Ethereum mainnet, a single swap costs $5-50 in gas. A vault rebalance touching 10 assets would cost $50-500. On Robinhood L2, the same rebalance costs < $0.10 total. This makes:
+High gas fees on Ethereum mainnet make complex portfolio management prohibitively expensive. A single swap can cost $5-$50, meaning a vault rebalance across 10 assets could cost upwards of $500.
 
-- Small fund sizes practical (even $100 funds work)
-- Frequent rebalancing affordable
-- Complex multi-asset strategies economical
+On Robinhood L2, the same rebalance costs less than $0.10 total. This dramatic reduction in transaction costs enables:
+- **Small fund sizes**: Even $100 funds can operate efficiently.
+- **Frequent rebalancing**: Strategies can adjust weights continuously without bleeding capital to gas fees.
+- **Complex multi-asset strategies**: Portfolios with dozens of assets are economically viable.
 
 ### Batch Rebalancing
 
@@ -57,5 +58,5 @@ With ~250ms finality, AI trading agents can react to market signals in near-real
 | **Network name** | Robinhood L2 Testnet |
 | **Chain ID** | 46630 |
 | **Currency** | ETH |
-| **RPC URL** | Available via Robinhood developer portal |
-| **Block explorer** | Available via Robinhood developer portal |
+| **RPC URL** | `https://rpc.testnet.chain.robinhood.com` |
+| **Block explorer** | `https://explorer.testnet.chain.robinhood.com` |

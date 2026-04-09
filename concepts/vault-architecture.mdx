@@ -70,15 +70,6 @@ Vaults maintain two distinct operations:
 - Restricted to authorized callers (curator or `RebalanceEngine`)
 - Configurable minimum interval between rebalances
 
-## Vault Types
+## Vault Upgrades
 
-Tilt supports two vault types that share the same `BaseVault` core:
-
-| | Curator Vault | Oracle Vault |
-|---|---|---|
-| **Weight source** | Curator sets weights directly | Oracle feeds weights automatically |
-| **Creation** | Permissionless | Permissioned (protocol owner) |
-| **Rebalancing** | Curator-triggered with time-lock | Automatic when oracle updates |
-| **Use case** | Custom strategies, AI-driven funds | Flagship strategies (e.g., politician trackers) |
-
-Both types are deployed as `BeaconProxy` instances, allowing the protocol to upgrade vault logic without redeploying individual vaults.
+Vaults are deployed as `BeaconProxy` instances, allowing the protocol to upgrade vault logic without redeploying individual vaults.

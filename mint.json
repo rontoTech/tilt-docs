@@ -60,10 +60,8 @@
       "pages": [
         "concepts/how-it-works",
         "concepts/vault-architecture",
-        "concepts/strategies",
         "concepts/supported-assets",
         "concepts/fees",
-        "concepts/idle-cash",
         "concepts/robinhood-l2"
       ]
     },

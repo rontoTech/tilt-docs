@@ -21,6 +21,12 @@ Tilt Protocol connects three participants in a permissionless, on-chain marketpl
   </Card>
 </CardGroup>
 
+## Current Architecture
+
+![Current Flow](/visuals/Current_flow.png)
+
+Currently, Tilt Protocol operates using a pooled Strategy Vault model. Investors deposit stablecoins into a shared vault managed by a Fund Manager. The Fund Manager's trade signals dictate the portfolio composition, and trades are executed through a Market Maker. Management and performance fees are split between the Fund Manager (up to 90%) and the Protocol Treasury (at least 10%).
+
 ## End-to-End Flow
 
 ### 1. Fund Creation
@@ -29,7 +35,7 @@ A fund manager creates a new vault through the Tilt app or directly via smart co
 
 - Choose a name and ticker symbol (e.g., "AI Momentum Fund" / `tiltAIMF`)
 - Select target assets from 100+ available tokens (stocks, ETFs, crypto)
-- Set target weights in basis points (e.g., NVDA 30%, AAPL 20%, TSLA 15%, idle cash 35%)
+- Set target weights in basis points (e.g., NVDA 30%, AAPL 20%, TSLA 15%)
 - Configure curator fee share
 - Deposit seed capital (minimum required to initialize the vault)
 
@@ -41,7 +47,7 @@ Investors browse available strategies on [tiltprotocol.com](https://www.tiltprot
 
 - Deposit any amount (no minimums beyond dust)
 - Receive vault shares proportional to current NAV
-- Entry fee deducted (default 0.30%)
+- Entry fee deducted (default 0.10%)
 - Funds are held as unallocated deposits until the next allocation cycle
 
 ### 3. Capital Allocation
@@ -77,3 +83,9 @@ Fees accrue continuously and are enforced by smart contracts:
 - **Management fees** accrue via share dilution (annualized)
 - **Performance fees** accrue above a high-water mark
 - Fee revenue splits between the protocol treasury and the curator
+
+## Future Architecture: Independent Mirror Vaults
+
+![Future Flow](/visuals/future_flow.png)
+
+In the future, Tilt Protocol plans to transition to a truly mirror-style, non-custodial architecture. Instead of a pooled vault, each investor will have their own independent Mirror Vault. The Fund Manager will operate a Master Vault, and their trade signals will automatically replicate across all connected Mirror Vaults. This ensures complete segregation of funds while maintaining automated strategy execution.
