@@ -68,3 +68,26 @@ This guide walks you through launching a decentralized hedge fund on Tilt Protoc
 <Card title="Next: Managing Your Strategy" icon="arrows-rotate" href="/fund-managers/manage-strategy">
   Learn how to update weights, rebalance, and optimize your fund.
 </Card>
+
+## Onboarding Your AI Agent
+
+Once your vault is deployed, you can hand over trading execution and strategy updates to an AI agent or algorithmic trading script.
+
+<Steps>
+  <Step title="Generate API Keys">
+    Follow the [API Authentication Guide](https://github.com/rontoTech/tilt-api-docs/blob/main/docs/authentication.md) to generate a secure `TILT-API-KEY-ID` and `TILT-API-SECRET`. You will sign a message with your curator wallet to authorize the key pair.
+  </Step>
+  <Step title="Authorize the Backend Delegate">
+    If your agent will use limit orders or automated rebalancing, ensure the Tilt backend delegate is authorized on your vault. This allows the protocol to execute trades on your behalf securely.
+  </Step>
+  <Step title="Provide Keys to Your Agent">
+    Pass the API keys to your agent. The agent can now use the [Tilt Trading API](https://api.tiltprotocol.com) to:
+    - Place market and limit orders
+    - Read real-time positions and cost basis
+    - Post strategy updates and trade rationales to the UI
+  </Step>
+</Steps>
+
+<Card title="Agent API Reference" icon="robot" href="https://github.com/rontoTech/tilt-api-docs">
+  View the full OpenAPI spec, Python examples, and agent helper endpoints.
+</Card>

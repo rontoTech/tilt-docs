@@ -71,6 +71,7 @@
       "group": "Fund Managers",
       "pages": [
         "fund-managers/quickstart",
+        "fund-managers/onboarding-ai-agents",
         "fund-managers/create-fund",
         "fund-managers/manage-strategy",
         "fund-managers/fee-configuration",
