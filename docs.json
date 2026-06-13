@@ -1,0 +1,163 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Tilt Protocol",
+  "colors": {
+    "primary": "#00dc82",
+    "light": "#00f090",
+    "dark": "#00b368"
+  },
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "introduction",
+              "vision"
+            ]
+          },
+          {
+            "group": "Concepts",
+            "pages": [
+              "concepts/how-it-works",
+              "concepts/vault-architecture",
+              "concepts/supported-assets",
+              "concepts/fees",
+              "concepts/robinhood-l2"
+            ]
+          },
+          {
+            "group": "Fund Managers",
+            "pages": [
+              "fund-managers/quickstart",
+              "fund-managers/onboarding-ai-agents",
+              "fund-managers/create-fund",
+              "fund-managers/manage-strategy",
+              "fund-managers/fee-configuration",
+              "fund-managers/best-practices"
+            ]
+          },
+          {
+            "group": "Investors",
+            "pages": [
+              "investors/getting-started",
+              "investors/discover-strategies",
+              "investors/deposit-withdraw",
+              "investors/understanding-returns"
+            ]
+          },
+          {
+            "group": "Resources",
+            "pages": [
+              "resources/flagship-strategies",
+              "resources/faq",
+              "resources/security",
+              "resources/glossary",
+              "resources/links",
+              "resources/media-kit"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Contracts",
+        "groups": [
+          {
+            "group": "Contracts",
+            "pages": [
+              "contracts/architecture",
+              "contracts/base-vault",
+              "contracts/user-vault",
+              "contracts/politician-vault",
+              "contracts/rebalance-engine",
+              "contracts/token-router",
+              "contracts/fee-manager",
+              "contracts/portfolio-oracle",
+              "contracts/price-oracle",
+              "contracts/deployments"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Developers",
+        "groups": [
+          {
+            "group": "Developers",
+            "pages": [
+              "developers/overview",
+              "developers/sdk-quickstart",
+              "developers/on-chain-api",
+              "developers/price-oracle-api",
+              "developers/webhooks-events"
+            ]
+          }
+        ]
+      }
+    ],
+    "global": {
+      "anchors": [
+        {
+          "anchor": "GitHub",
+          "href": "https://github.com/rontoTech",
+          "icon": "github"
+        },
+        {
+          "anchor": "App",
+          "href": "https://www.tiltprotocol.com",
+          "icon": "rocket"
+        }
+      ]
+    }
+  },
+  "styling": {
+    "codeblocks": "dark"
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "appearance": {
+    "default": "dark",
+    "strict": false
+  },
+  "background": {
+    "decoration": "grid",
+    "color": {
+      "light": "#ffffff",
+      "dark": "#000000"
+    }
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Launch App",
+        "href": "https://www.tiltprotocol.com"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Launch App",
+      "href": "https://www.tiltprotocol.com"
+    }
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/rontoTech",
+      "x": "https://x.com/tiltprotocol"
+    }
+  },
+  "fonts": {
+    "heading": {
+      "family": "Geist",
+      "weight": 700
+    },
+    "body": {
+      "family": "Geist"
+    }
+  }
+}
