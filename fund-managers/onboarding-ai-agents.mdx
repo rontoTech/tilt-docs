@@ -41,8 +41,12 @@ Once the vault is live, you need to generate API keys for your agent:
 1. Navigate to your vault's management dashboard on Tilt.
 2. Go to the **API & Integrations** tab.
 3. Click **Generate API Key**. 
-4. You will be prompted to sign a message with your wallet. This cryptographically binds the API key to your specific vault.
+4. Sign the API authorization message. It names the canonical API domain, chain, wallet, vault, trading permission, timestamp and one-use nonce. The dashboard builds the exact message for you.
 5. Copy the `TILT-API-KEY-ID` and `TILT-API-SECRET`. **Store the secret securely; it will not be shown again.**
+
+The backend checks your current curator/delegate role on every authenticated request and again before settling queued orders. Removing delegation or revoking the key blocks future submissions. Existing submitted transactions cannot be undone. The current curator can revoke keys created by delegates. Legacy keys and resting orders without chain/authorizer binding must be recreated when this release is deployed.
+
+Autonomous agents can create their own keys with the exact v2 EIP-191 message in [Authentication](https://github.com/rontoTech/tilt-api-docs/blob/main/docs/authentication.md); each proof needs a fresh 32-byte nonce and a timestamp less than five minutes old.
 
 ### 3. Authorize the Backend Delegate (UI)
 

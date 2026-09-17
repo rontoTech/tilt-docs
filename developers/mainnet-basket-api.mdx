@@ -1,0 +1,48 @@
+---
+title: "Mainnet basket and order API"
+description: "Investor-signed basket conversion and reliable manager order handling."
+---
+
+<Note>This page describes the immutable mainnet release candidate. The endpoint is available only after the final basket factory and router are configured. Testnet software. Not financial advice.</Note>
+
+## Investor cash conversion
+
+`POST https://api.tiltprotocol.com/v1/vaults/{vault}/basket-quote` returns a transaction for the investor to review and sign. This public endpoint does not sign, approve tokens, move funds, or broadcast. It permits ten requests per minute per client IP.
+
+Send `mode` (`deposit` or `redeem`), `caller`, `shares`, and `maxFeeBps`. A deposit also requires `maxBaseIn`; cash redemption requires `minBaseOut`. Shares and cash bounds are **integer strings in raw units**. Read the token and vault decimals. Optional `slippageBps` is between zero and fifty, default fifty.
+
+A deposit buys the existing proportional basket and then mints the specified net shares. The cash budget bounds what the router pulls; unspent amounts are refunded. Cash redemption sells conservative minimum token amounts, ten basis points below the preview, to accommodate fee accrual before inclusion. **Any unsold tokens are returned to the investor.**
+
+The response includes:
+
+- `transaction`: the router address, encoded call, zero native value and chain ID.
+- `approval`: the exact token, spender and amount.
+- `expiresAt`: Unix seconds, matching the encoded deadline, within sixty seconds.
+- `tokenAmounts` and `tokenAmountsKind`: required deposit amounts or minimum redemption amounts.
+- `previewTokenAmounts`, `estimatedBaseAmount`, fee information and `residualTokensPossible`.
+
+Verify the chain, configured factory and router locally, then decode the call and check its vault, shares, cash bound, fee ceiling and deadline before signing. A response is a proposal, not a completed deposit or redemption. Changed holdings, fees, transfer permissions or quotes can still cause a revert.
+
+The raw proportional `redeemBasket` exit remains separate from optional cash conversion. A frozen asset becomes a vault claim; cash conversion can fail while the raw basket exit remains available.
+
+See the [complete API reference](https://github.com/rontoTech/tilt-api-docs/blob/main/docs/basket-quotes.md) for request and response fields.
+
+## Manager orders and recovery
+
+Mainnet market orders use firm venue quotes. Limit orders use the live reference as a trigger and also enforce the display-share limit through the on-chain minimum output. Exact-output input ceilings that would breach the limit leave an order unfilled.
+
+Each order retains its authorizing wallet and chain. The wallet must remain the curator or an active delegate; its API key must also remain valid before settlement. Removing authority prevents later fills of that wallet's resting orders. Temporary authorization-read failures defer execution.
+
+A vault can have up to 1,000 live orders. Close unneeded resting orders before adding more. The keeper checks bounded batches fairly across vaults, so a large book may require multiple polls.
+
+HTTP **202** with `pending_new` means the transaction is in flight or its outcome requires reconciliation. It may already have settled even when no hash is available. Poll the existing order and keep the original `client_order_id`; never submit a replacement under a new ID while the outcome is unresolved. Cancellation and expiry cannot override an in-flight order.
+
+A confirmed receipt supplies actual fill amounts. Missing amounts remain pending rather than being inferred from a quote. Unknown broadcasts without a recoverable hash require operator reconciliation; an expired lease alone never authorizes resubmission.
+
+## Order lifetime and administration
+
+Mainnet trading follows the configured on-chain `marketOpen` and validated-price policy, independently of testnet exchange hours. Mainnet `day` orders expire at the end of their UTC creation date; `gtc` persists and `gtd` requires a valid future timestamp. IOC/FOK resting limits are unsupported.
+
+The agent API's legacy pause, unpause, name, description and cost-basis backfill endpoints return HTTP409 on mainnet. Protocol administration requires the authorized wallet to sign the current on-chain interface. The contracts address book exposes immutable basket ABIs and explicitly configured factory, router and lens addresses.
+
+Manager trading currently binds a deployment’s configured base asset, engine and price router. A vault from another configuration returns `42210017` until that generation is explicitly supported. Investor basket quotes read the vault’s own base asset.
