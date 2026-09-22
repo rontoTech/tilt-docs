@@ -43,6 +43,10 @@ A confirmed receipt supplies actual fill amounts. Missing amounts remain pending
 
 Mainnet trading follows the configured on-chain `marketOpen` and validated-price policy, independently of testnet exchange hours. Mainnet `day` orders expire at the end of their UTC creation date; `gtc` persists and `gtd` requires a valid future timestamp. IOC/FOK resting limits are unsupported.
 
+The release candidate includes a separate Tilt operational-health gate. When configured, a dedicated reporter maintains short-lived observations; expiry or an incident requires administrator recovery and a new grace period. This is an operator-dependent control, not a Chainlink sequencer-uptime oracle. It cannot guarantee protection through every brief outage or transaction-ordering race. Error `42210012` means pricing health is unavailable or recovering; managers cannot reopen the gate.
+
+Raw basket redemption and reserved-token claims remain independent of health status. An uncomputable performance fee is waived on exit while management fees accrue. Individual asset-price failures remain scoped to affected assets. Optional investor cash conversion is a separate, amount-bounded transaction and can fail even while raw redemption remains available.
+
 The agent API's legacy pause, unpause, name, description and cost-basis backfill endpoints return HTTP409 on mainnet. Protocol administration requires the authorized wallet to sign the current on-chain interface. The contracts address book exposes immutable basket ABIs and explicitly configured factory, router and lens addresses.
 
 Manager trading currently binds a deployment’s configured base asset, engine and price router. A vault from another configuration returns `42210017` until that generation is explicitly supported. Investor basket quotes read the vault’s own base asset.
