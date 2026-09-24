@@ -5,6 +5,8 @@ description: "Investor-signed basket conversion and reliable manager order handl
 
 <Note>Mainnet beta contracts are deployed and configured; activation remains pending. The contracts have not been independently audited, and mainnet uses real assets. See [beta status and limits](/mainnet-beta). Testnet remains a separate environment.</Note>
 
+Mainnet manager keys use the separate [mainnet authentication reference](https://github.com/rontoTech/tilt-api-docs/blob/main/docs/mainnet-authentication.md) and [mainnet OpenAPI specification](https://github.com/rontoTech/tilt-api-docs/blob/main/openapi.mainnet.yaml). The fixed signature domain remains `https://api.tiltprotocol.com`, while requests use the mainnet API origin and signed chain ID 4663. Agents must explicitly select the [mainnet skill](https://github.com/rontoTech/tilt-protocol-openclaw/blob/main/SKILL.mainnet.md); the default skill and testnet onboarding keep their deployed authentication flow.
+
 ## Investor cash conversion
 
 `POST /v1/vaults/{vault}/basket-quote` on the **mainnet API origin**, `https://tilt-mainnet-api-production.up.railway.app`, returns a transaction for the investor to review and sign when its execution gates permit it. API availability does not announce beta activation; `https://api.tiltprotocol.com` remains testnet. This public endpoint does not sign, approve tokens, move funds, or broadcast. It permits ten requests per minute per client IP.
