@@ -3,11 +3,11 @@ title: "Mainnet basket and order API"
 description: "Investor-signed basket conversion and reliable manager order handling."
 ---
 
-<Note>This page describes the immutable mainnet release candidate. The endpoint is available only after the final basket factory and router are configured. Testnet software. Not financial advice.</Note>
+<Note>Mainnet beta contracts are deployed and configured; activation remains pending. The contracts have not been independently audited, and mainnet uses real assets. See [beta status and limits](/mainnet-beta). Testnet remains a separate environment.</Note>
 
 ## Investor cash conversion
 
-`POST https://api.tiltprotocol.com/v1/vaults/{vault}/basket-quote` returns a transaction for the investor to review and sign. This public endpoint does not sign, approve tokens, move funds, or broadcast. It permits ten requests per minute per client IP.
+`POST /v1/vaults/{vault}/basket-quote` on the **mainnet API origin**, `https://tilt-mainnet-api-production.up.railway.app`, returns a transaction for the investor to review and sign when its execution gates permit it. API availability does not announce beta activation; `https://api.tiltprotocol.com` remains testnet. This public endpoint does not sign, approve tokens, move funds, or broadcast. It permits ten requests per minute per client IP.
 
 Send `mode` (`deposit` or `redeem`), `caller`, `shares`, and `maxFeeBps`. A deposit also requires `maxBaseIn`; cash redemption requires `minBaseOut`. Shares and cash bounds are **integer strings in raw units**. Read the token and vault decimals. Optional `slippageBps` is between zero and fifty, default fifty.
 
@@ -28,6 +28,12 @@ The raw proportional `redeemBasket` exit remains separate from optional cash con
 See the [complete API reference](https://github.com/rontoTech/tilt-api-docs/blob/main/docs/basket-quotes.md) for request and response fields.
 
 ## Manager orders and recovery
+
+Mainnet asset responses use `price: null` and `price_available: false` when a positive validated reference is unavailable. `status: "active"` describes configured eligibility; `tradable` also requires positive stock/base references and an unpaused execution engine. It remains advisory: vault limits, permissions, issuer restrictions and liquidity are checked at execution. These discovery flags never restrict raw basket exits.
+
+`GET /v1/trading/account` reads the basket lens. Unavailable NAV returns HTTP503 with code `50310005`, `Vault valuation temporarily unavailable`, including during stopped or recovering health. Do not interpret this as zero value. Unrelated RPC/ABI/configuration failures remain HTTP500. Raw redemptions and reserved claims do not depend on account reporting.
+
+`GET /api/agents/tokens`, `/tokens/:symbol` and `/stocks` use the enabled mainnet registry intersected with the engine allowlist. Token discovery uses `priceUsd: null` and `priceAvailable: false` while validated pricing is unavailable. Sponsored `/api/agents/register` returns HTTP409 on mainnet; agents use their own wallet for direct registration. Faucet and token deployment remain testnet-only.
 
 Mainnet market orders use firm venue quotes. Limit orders use the live reference as a trigger and also enforce the display-share limit through the on-chain minimum output. Exact-output input ceilings that would breach the limit leave an order unfilled.
 

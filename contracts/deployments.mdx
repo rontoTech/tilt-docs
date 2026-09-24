@@ -1,33 +1,66 @@
 ---
 title: Deployments
-description: "Contract addresses on Robinhood L2 Testnet"
+description: "Separate Robinhood Chain mainnet beta and testnet deployments."
 ---
 
-# Deployment Addresses
+# Deployment addresses
 
-All contracts are deployed on **Robinhood L2 Testnet** (Chain ID: 46630).
+## Mainnet beta — chain 4663
 
-## Core Infrastructure
+Deployed on September 22, 2026. **Configured and closed; activation, health recovery and funded verification are pending.** Deployment is not confirmation that new vaults or trading are open. The contracts have not been independently audited. Mainnet transactions use real assets and can lose the entire deposit. See [mainnet beta](/mainnet-beta) for scope and current restrictions.
+
+| Contract | Address |
+|---|---|
+| USDG | `0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168` |
+| BasketVaultFactory | `0x463A6Db2731d4c5C5e9d937f7F9ccC82c2178D37` |
+| VaultRegistry | `0xA977dE2a44e7eA96075b0b222D785a4103Bce3E2` |
+| ProtocolFeeConfig | `0x0C418B16275D6be55D35f972E3A8e9aDfE1bb489` |
+| MainnetExecutionEngine | `0x2F73BBB4E73ad2CEdb2336ee74202D88D2f9709F` |
+| MainnetExecutionEngine implementation | `0xE88e7412Ad12cc867657043a354A9Cac27e1Cc59` |
+| ChainlinkPriceRouter | `0xA8ce6799F609E393Be18C685C05bffc29C27C0Cc` |
+| ChainlinkPriceRouter implementation | `0x1FEFe66c26584fce42a17C85CCF7577B5e61f1A0` |
+| TradeDelegateProxyV2 | `0x0f060b7b6331C27423c50fd386E27832AA410055` |
+| BasketRouter | `0xB200A060eC342Ef65471595e0D506C830deAd8c1` |
+| BasketVaultLens | `0x02eEFa923022E45F6f998e91a7Ad79bEbA9D5214` |
+| UniV3Adapter | `0x3F5c862511d5471Bb916C6033Ae489868319277e` |
+| AgentRegistry | `0xFFdB1FF721CD4870525fA839AB04E7CCFe07D125` |
+| OperationalHealthGate | `0xa4d43f4eeE47ba94CFC7f9F8B14DA6C89B7c06a4` |
+
+Verify on [Robinhood Chain Explorer](https://robinhoodchain.blockscout.com). The protocol administrator is temporarily the EOA `0x5387284206D648afE82240d2E303c20dc402D022`; it is not a Safe. A Safe handover is planned after audit. Each BasketVault is directly deployed with immutable code; the engine and price-router upgrade hooks are disabled. Administrative configuration remains a trust assumption.
+
+The operational-health contract is a Tilt-operated expiring lease, **not a Chainlink sequencer-uptime feed**. Mainnet has no Tilt stock-token factory or legacy FeeManager. Do not use the testnet ABI or addresses for mainnet deposits.
+
+## Testnet — chain 46630
+
+The existing app remains at [testnet.tiltprotocol.com](https://testnet.tiltprotocol.com). Its assets have no real value. Testnet software. Not financial advice.
+
+### Current core infrastructure
 
 Canonical addresses match `bowstring-ui` `ADDRESSES` (`src/lib/contracts.ts`).
 
 | Contract | Address |
 |---|---|
 | **tiltUSDC** | `0x941A382852E989078e15b381f921C488a7Ca5299` |
-| **FeeManager** | `0x7998d44B847Df1F86A721E5Dd34106BD1Ff541d4` |
-| **VaultRegistry** | `0xBe4447B2381928614a91cEf4Bac2c34CeF539a22` |
-| **PortfolioOracle** | `0xf024311A7bca364f3328797bCEEf906b8516b0D7` |
-| **RebalanceEngine** | `0xe6C1Ed308d01F6f5E33B51b436C1Bb642521A02c` |
+| **FeeManager** | `0x6AE7D6e5135c5B8057ACFaA4c17675433c376C2b` |
+| **VaultRegistry** | `0x5ee250564b094b787e022681cBEE003A368d64aa` |
+| **RebalanceEngine** | `0xAfe9CA99AB3CFa2523553E25743eA1463ae35eF2` |
 | **TokenRouter** | `0x9fA2D96Ef53912162f3F8bcd73620Bf93D39808D` |
 | **StockTokenFactory** | `0x1C65b83B16Fce8f8c420b299EE1A101b724d1F3D` |
+| **PriceOracle** | `0x1a105C43e70Dee39Fa33841d1846C2c2620c9DE4` |
 
-## Vault Factory
+### Vault factory
 
 | Contract | Address |
 |---|---|
-| **UserVaultFactory** | `0x8a7A5EC2830c0EDD620f41153a881F71Ffb981B9` |
+| **UserVaultFactory** | `0xD5210C45C7B65E4D9Eed53391D2199a2aB9DcF57` |
 
-## Flagship Vaults (Politician Trackers)
+### Legacy testnet history
+
+Historical registry reads retain `0x38485146d0D1E0c700ddBf61206188CFaC170795` and `0xBe4447B2381928614a91cEf4Bac2c34CeF539a22`. The old PortfolioOracle is `0xf024311A7bca364f3328797bCEEf906b8516b0D7`. These are not new-vault creation targets.
+
+### Historical politician trackers
+
+These trackers are dormant and are retained for historical reference; they are not current flagship strategies or mainnet products.
 
 | Vault | Symbol | Address |
 |---|---|---|
@@ -39,5 +72,5 @@ Canonical addresses match `bowstring-ui` `ADDRESSES` (`src/lib/contracts.ts`).
 | Tilt Sessions Index | tiltSESS | `0x34f0C33CDc9fdc4BefE6F91655572ea54e08B7AD` |
 
 <Note>
-  All vaults are UserVaults managed by the Tilt Protocol address. They are auto-discovered via the VaultRegistry — no hardcoded addresses needed in application code. These addresses are for the testnet deployment. Mainnet addresses will be published here after launch.
+  Testnet and mainnet use different vault models, registries, balances and API environments. Verify the chain and current address book before signing. A deployed address does not establish trading availability or audit status.
 </Note>
