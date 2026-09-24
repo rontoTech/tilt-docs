@@ -17,6 +17,7 @@
             "group": "Getting Started",
             "pages": [
               "introduction",
+              "mainnet-beta",
               "vision"
             ]
           },
@@ -90,6 +91,7 @@
             "group": "Developers",
             "pages": [
               "developers/overview",
+              "developers/mainnet-basket-api",
               "developers/sdk-quickstart",
               "developers/on-chain-api",
               "developers/price-oracle-api",

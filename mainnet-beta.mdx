@@ -1,0 +1,46 @@
+---
+title: "Mainnet beta"
+description: "Real assets, isolated immutable vaults, and the current beta limits on Robinhood Chain."
+---
+
+<Warning>
+  Status: configured and closed; activation is pending. Contracts were deployed on September 22, 2026, but health recovery and funded verification have not finished. The beta contracts have not been independently audited. Real assets are at risk, including your entire deposit. Not financial advice.
+</Warning>
+
+## Separate environments
+
+The mainnet app is [app.tiltprotocol.com](https://app.tiltprotocol.com) on Robinhood Chain **4663**. It remains in prelaunch until activation checks finish. The existing [testnet app](https://testnet.tiltprotocol.com) stays on **46630**, with its existing test tokens and API at `https://api.tiltprotocol.com`. Testnet software. Not financial advice.
+
+The mainnet API is separately deployed at `https://tilt-mainnet-api-production.up.railway.app`. Its availability does not mean trading or the app is activated. Do not send mainnet orders or signatures to the testnet API. Mainnet addresses are listed on [Deployments](/contracts/deployments).
+
+Use the dedicated [mainnet authentication reference](https://github.com/rontoTech/tilt-api-docs/blob/main/docs/mainnet-authentication.md) for manager keys. Autonomous agents use the [mainnet skill](https://github.com/rontoTech/tilt-protocol-openclaw/blob/main/SKILL.mainnet.md) only after explicit mainnet selection; the default skill remains testnet.
+
+## Initial scope and limits
+
+USDG is the base asset. The initial approved equities are **AAPL, MSFT, TSLA, GOOGL and NVDA**. An asset's inclusion does not guarantee current liquidity or transferability; the live allowlist, feeds and issuer controls still apply.
+
+Initial manager trading limits are **1,000 USDG per vault** and **10,000 USDG across the protocol**. These are turnover limits, not deposit insurance or maximum-loss limits. The contract conservatively sums the current and previous UTC day's usage, so capacity can remain occupied for nearly 48 hours rather than resetting fully at midnight. Administrators can restrict activity; cap increases follow the contract's delay.
+
+Execution uses approved **0x and Uniswap** contracts and spenders. Managers can trade approved assets through protocol-controlled execution. They cannot replace vault custody code, redirect outputs to arbitrary recipients or withdraw investors' holdings.
+
+The beta schedule is regular U.S. equity sessions: **09:30–16:00 America/New_York**, with exchange holidays and early closes. This narrower beta schedule does not describe every session supported by Robinhood Chain. The on-chain market flag and valid health/price checks determine whether a trade can execute; a wall clock or open exchange alone is insufficient. Mainnet `day` orders still expire at the end of their UTC creation date.
+
+The reviewed calendar covers 2026 and 2027 and closes unsupported years. Upcoming early closes are **13:00 New York time on November 27 and December 24, 2026**, and **November 26, 2027**. Calendar automation remains subject to the beta activation checks.
+
+## Vault ownership and fees
+
+Each vault holds its own token basket and has immutable code. Existing investments cannot be upgraded in place. A new base asset or contract version requires a new configuration; investors choose whether to redeem and migrate.
+
+Management and high-water-mark performance rates are selected at vault creation and cannot change, including when set to zero. Entry and exit fees start at zero; administrators can adjust them immediately within 1% and 2% caps. Signed transaction fee ceilings protect the investor's chosen bounds. Tilt initially receives 10% of management/performance fees, subject to protocol configuration. Read the current vault's terms before signing. Reported share value is before pending fees; transaction previews include accrued fees.
+
+Administration temporarily uses EOA `0x5387284206D648afE82240d2E303c20dc402D022`. A Safe handover is planned after audit. Immutable vault code does not remove administrator control over allowed assets, price sources, approved execution providers or protocol fee settings.
+
+## Deposits, exits and unavailable tokens
+
+A deposit contributes the existing proportional token basket. Optional cash conversion can acquire that basket with an explicit USDG spending limit. Raw redemption returns proportional holdings; optional cash conversion is a separate investor-signed transaction and may leave small residual token amounts.
+
+Raw basket redemption and reserved-token claims do not depend on the operational-health gate or a price being available. A token that cannot transfer becomes a claim, whose delivery depends on the issuer permitting transfer. Reserved claims are excluded from active holdings and recover proportionally if the issuer impairs reserves. An uncomputable performance fee is waived on exit while management fees accrue. These rules do not guarantee token liquidity or recovery of issuer losses.
+
+Tilt's operational-health gate uses short-lived operator observations and deliberate recovery. It is not a Chainlink sequencer-uptime feed, cannot guarantee protection through every brief outage, and does not automatically reopen after a failure. During verified ordinary market closures, bounded last-close equity valuation can remain available; trading still requires fresh valid prices and an open market.
+
+See the [basket and order API](/developers/mainnet-basket-api) for signed cash conversion, fees, limits and recovery from uncertain transaction outcomes.
